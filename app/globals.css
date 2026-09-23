@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-navy: #070d18;
+  --color-navy-2: #0d1b2e;
+  --color-navy-3: #13263f;
+  --color-line: #1e3a5f;
+  --color-cyan: #22d3ee;
+  --color-cyan-2: #67e8f9;
+  --color-ink: #e8f4ff;
+  --color-muted: #93a4bd;
+  --font-sans: var(--font-heebo);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(34, 211, 238, 0.12), transparent 50%),
+    radial-gradient(900px 500px at -10% 20%, rgba(14, 116, 144, 0.18), transparent 45%),
+    var(--color-navy);
+  color: var(--color-ink);
+  font-family: var(--font-heebo), Arial, sans-serif;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.28);
+}
+
+input,
+textarea,
+select {
+  color-scheme: dark;
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: #0a1628 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-sheet {
+    box-shadow: none !important;
+    border: none !important;
+  }
 }

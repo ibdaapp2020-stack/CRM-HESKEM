@@ -1,0 +1,337 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         String   @default("CLIENT")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ownedLeads Lead[]           @relation("LeadOwner")
+  clientLead Lead?            @relation("LeadClient")
+  messages   Message[]
+  activities Activity[]
+  questions  ClientQuestion[] @relation("QuestionAuthor")
+}
+
+model Lead {
+  id           String   @id @default(cuid())
+  fullName     String
+  phone        String
+  email        String?
+  company      String?
+  source       String   @default("whatsapp")
+  industry     String   @default("general")
+  locale       String   @default("he")
+  stage        String   @default("NEW_LEAD")
+  score        Int      @default(0)
+  tags         String   @default("[]")
+  notes        String?
+  lostReason   String?
+  ownerId      String?
+  owner        User?    @relation("LeadOwner", fields: [ownerId], references: [id])
+  clientUserId String?  @unique
+  clientUser   User?    @relation("LeadClient", fields: [clientUserId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  qualification  Qualification?
+  conversation   Conversation?
+  documents      Document[]
+  questions      ClientQuestion[]
+  project        Project?
+  payments       Payment[]
+  paymentMethods PaymentMethod[]
+  receipts       Receipt[]
+  activities     Activity[]
+  appointments   Appointment[]
+  systemAccesses SystemAccess[]
+  retainerPlans  RetainerPlan[]
+}
+
+model Qualification {
+  id          String   @id @default(cuid())
+  leadId      String   @unique
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  budget      String?
+  serviceType String?
+  urgency     String?
+  fit         String?
+  answers     String   @default("{}")
+  score       Int      @default(0)
+  qualified   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Conversation {
+  id       String    @id @default(cuid())
+  leadId   String    @unique
+  lead     Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  channel  String    @default("inbox")
+  unread   Int       @default(0)
+  lastAt   DateTime  @default(now())
+  messages Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  direction      String
+  channel        String       @default("inbox")
+  body           String
+  templateKey    String?
+  authorId       String?
+  author         User?        @relation(fields: [authorId], references: [id])
+  createdAt      DateTime     @default(now())
+}
+
+model MessageTemplate {
+  id    String @id @default(cuid())
+  key   String @unique
+  title String
+  body  String
+}
+
+model DocumentTemplate {
+  id            String   @id @default(cuid())
+  type          String
+  name          String
+  industry      String   @default("general")
+  locale        String   @default("he")
+  version       Int      @default(1)
+  title         String
+  intro         String
+  body          String
+  footer        String
+  lineItemsJson String   @default("[]")
+  isDefault     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+model Document {
+  id           String    @id @default(cuid())
+  leadId       String
+  lead         Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  templateId   String?
+  type         String
+  title        String
+  locale       String    @default("he")
+  status       String    @default("DRAFT")
+  intro        String
+  body         String
+  footer       String
+  validUntil   DateTime?
+  currency     String    @default("ILS")
+  subtotal     Float     @default(0)
+  vatRate      Float     @default(17)
+  vatAmount    Float     @default(0)
+  total        Float     @default(0)
+  customNotes  String?
+  signToken    String    @unique
+  signTokenExp DateTime?
+  snapshotHtml String?
+  lockedAt     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  lineItems  DocumentLineItem[]
+  signatures Signature[]
+}
+
+model DocumentLineItem {
+  id          String   @id @default(cuid())
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  quantity    Float    @default(1)
+  unitPrice   Float    @default(0)
+  discount    Float    @default(0)
+  sortOrder   Int      @default(0)
+}
+
+model Signature {
+  id          String   @id @default(cuid())
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  signerName  String
+  signerRole  String
+  imageData   String
+  ipAddress   String?
+  userAgent   String?
+  contentHash String
+  signedAt    DateTime @default(now())
+}
+
+model ClientQuestion {
+  id         String    @id @default(cuid())
+  leadId     String
+  lead       Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  authorId   String?
+  author     User?     @relation("QuestionAuthor", fields: [authorId], references: [id])
+  question   String
+  required   Boolean   @default(true)
+  answer     String?
+  answeredAt DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  leadId    String   @unique
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  name      String
+  status    String   @default("PLANNING")
+  summary   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  milestones Milestone[]
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  status      String    @default("PENDING")
+  dueDate     DateTime?
+  sortOrder   Int       @default(0)
+  completedAt DateTime?
+}
+
+model PaymentMethod {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  provider  String
+  token     String
+  last4     String
+  brand     String
+  expMonth  Int?
+  expYear   Int?
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id          String    @id @default(cuid())
+  leadId      String
+  lead        Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  amount      Float
+  currency    String    @default("ILS")
+  status      String    @default("PENDING")
+  provider    String
+  providerRef String?
+  purpose     String    @default("account_close")
+  createdAt   DateTime  @default(now())
+  paidAt      DateTime?
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type        String
+  title       String
+  scheduledAt DateTime
+  location    String?
+  notes       String?
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model AppSetting {
+  key   String @id
+  value String
+}
+
+model Receipt {
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  method      String
+  amount      Float
+  currency    String   @default("ILS")
+  receivedAt  DateTime @default(now())
+  reference   String?
+  bank        String?
+  checkNumber String?
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model SystemAccess {
+  id        String         @id @default(cuid())
+  leadId    String
+  lead      Lead           @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  label     String
+  url       String?
+  username  String?
+  secret    String?
+  version   String?
+  notes     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  changes   SystemChange[]
+}
+
+model SystemChange {
+  id        String       @id @default(cuid())
+  accessId  String
+  access    SystemAccess @relation(fields: [accessId], references: [id], onDelete: Cascade)
+  version   String
+  summary   String
+  changedAt DateTime     @default(now())
+}
+
+model RetainerPlan {
+  id             String          @id @default(cuid())
+  leadId         String
+  lead           Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  title          String
+  unitLabel      String          @default("סרטונים")
+  quotaPerPeriod Int             @default(4)
+  period         String          @default("MONTH")
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  entries        RetainerEntry[]
+}
+
+model RetainerEntry {
+  id        String       @id @default(cuid())
+  planId    String
+  plan      RetainerPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  periodKey String
+  delivered Int          @default(0)
+  notes     String?
+  status    String       @default("OPEN")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([planId, periodKey])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  type      String
+  message   String
+  createdAt DateTime @default(now())
+}
