@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CRM Heskem (הסכם)
 
-## Getting Started
+מערכת CRM / הצעות מחיר והסכמים — Next.js + Prisma + Supabase.
 
-First, run the development server:
+## פיתוח מקומי
+
+1. העתק משתני סביבה:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. מלא `DATABASE_URL` ו-`DIRECT_URL` מפרויקט [Supabase](https://supabase.com) (Database → Connection string).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. התקן והרץ:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run db:setup
+npm run dev
+```
 
-## Learn More
+פתח [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+## העלאה לאוויר (Vercel + GitHub + Supabase + דומיין)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1) GitHub
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+הריפו כבר ב-GitHub:
 
-## Deploy on Vercel
+https://github.com/ibdaapp2020-stack/CRM-HESKEM
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2) Supabase
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. צור פרויקט ב-[supabase.com](https://supabase.com/dashboard).
+2. לך ל-**Project Settings → Database**.
+3. העתק:
+   - **Connection string → URI (Transaction / pooler, port 6543)** → `DATABASE_URL`  
+     הוסף בסוף: `?pgbouncer=true`
+   - **Connection string → URI (Session / direct, port 5432)** → `DIRECT_URL`
+4. מקומית (או מ-CI) הרץ פעם אחת מול Supabase:
+
+```bash
+npm run db:setup
+```
+
+### 3) Vercel (פריסה מ-GitHub)
+
+1. היכנס ל-[vercel.com/new](https://vercel.com/new).
+2. ייבא את הריפו `ibdaapp2020-stack/CRM-HESKEM`.
+3. ב-**Environment Variables** הוסף:
+
+| Name | Value |
+|------|--------|
+| `DATABASE_URL` | מ-Supabase (pooler + `?pgbouncer=true`) |
+| `DIRECT_URL` | מ-Supabase (direct) |
+| `AUTH_SECRET` | מחרוזת אקראית ארוכה |
+| `AUTH_COOKIE` | `ibda_session` |
+| `PAYMENT_PROVIDER` | `sandbox` |
+| `WHATSAPP_PROVIDER` | `inbox` |
+| `NEXT_PUBLIC_APP_URL` | `https://your-domain.com` (אחרי חיבור דומיין) |
+
+4. Deploy.
+
+### 4) דומיין חדש
+
+1. ב-Vercel: **Project → Settings → Domains** → הוסף את הדומיין.
+2. אצל רשם הדומיין הגדר DNS לפי ההוראות של Vercel (בדרך כלל רשומת `A` / `CNAME`).
+3. עדכן ב-Vercel את `NEXT_PUBLIC_APP_URL` לכתובת הדומיין הסופית ו-Redeploy.
+
+## סקריפטים
+
+| פקודה | תיאור |
+|--------|--------|
+| `npm run dev` | שרת פיתוח |
+| `npm run build` | בניית פרודקשן |
+| `npm run db:push` | סנכרון סכמה ל-DB |
+| `npm run db:seed` | נתוני התחלה |
+| `npm run db:setup` | push + seed |
