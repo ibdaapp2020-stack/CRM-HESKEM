@@ -1,0 +1,36 @@
+# Firebase App Hosting — https://firebase.google.com/docs/app-hosting/configure
+runConfig:
+  minInstances: 0
+  maxInstances: 4
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 1024
+
+env:
+  - variable: AUTH_COOKIE
+    value: ibda_session
+    availability:
+      - RUNTIME
+  - variable: PAYMENT_PROVIDER
+    value: sandbox
+    availability:
+      - RUNTIME
+  - variable: WHATSAPP_PROVIDER
+    value: inbox
+    availability:
+      - RUNTIME
+  - variable: DATABASE_URL
+    secret: DATABASE_URL
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: AUTH_SECRET
+    secret: AUTH_SECRET
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_APP_URL
+    secret: NEXT_PUBLIC_APP_URL
+    availability:
+      - BUILD
+      - RUNTIME
