@@ -1,10 +1,17 @@
+import { WhatsAppAccountCard } from "@/components/whatsapp-account-card";
 import { Button, Card, Field, Input } from "@/components/ui";
 import { saveWhatsAppSettingsAction, currentWhatsAppSettings } from "@/lib/actions/office";
+import { getStoredWhatsAppAccount } from "@/lib/whatsapp/account";
 import { getT } from "@/lib/locale";
+import { prisma } from "@/lib/prisma";
 
 export default async function SettingsPage() {
   const { t } = await getT();
-  const cfg = await currentWhatsAppSettings();
+  const [cfg, account, errorRow] = await Promise.all([
+    currentWhatsAppSettings(),
+    getStoredWhatsAppAccount(),
+    prisma.appSetting.findUnique({ where: { key: "whatsapp_last_error" } }),
+  ]);
   const appUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     "https://heskem--crm-heskem.europe-west4.hosted.app";
@@ -16,6 +23,7 @@ export default async function SettingsPage() {
         <h1 className="text-2xl font-bold">{t("settings")}</h1>
         <p className="text-sm text-muted">{t("whatsappSettings")}</p>
       </div>
+      <WhatsAppAccountCard account={account} error={errorRow?.value} />
 
       <Card className="space-y-3 p-6 text-sm">
         <h2 className="font-medium">{t("whatsappMetaSteps")}</h2>

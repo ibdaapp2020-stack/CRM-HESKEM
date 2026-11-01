@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Card } from "@/components/ui";
 import { StageBadge } from "@/components/stage-badge";
+import { WhatsAppAccountCard } from "@/components/whatsapp-account-card";
 import { prisma } from "@/lib/prisma";
+import { getStoredWhatsAppAccount } from "@/lib/whatsapp/account";
 import { STAGE_META, type Stage } from "@/lib/pipeline";
 import { formatDateTime } from "@/lib/utils";
 
 export default async function OfficeDashboardPage() {
-  const [leads, waitingSign, waitingPay, projects, activities] = await Promise.all([
+  const [leads, waitingSign, waitingPay, projects, activities, whatsapp, errorRow] = await Promise.all([
     prisma.lead.findMany({ orderBy: { updatedAt: "desc" } }),
     prisma.document.findMany({
       where: { status: { in: ["SENT", "VIEWED"] } },
@@ -22,6 +24,8 @@ export default async function OfficeDashboardPage() {
       orderBy: { createdAt: "desc" },
       include: { lead: true },
     }),
+    getStoredWhatsAppAccount(),
+    prisma.appSetting.findUnique({ where: { key: "whatsapp_last_error" } }),
   ]);
 
   const counts = leads.reduce<Record<string, number>>((acc, lead) => {
@@ -37,6 +41,7 @@ export default async function OfficeDashboardPage() {
           סינון לידים, חתימות, תשלומים והקמות — במבט אחד.
         </p>
       </div>
+      <WhatsAppAccountCard account={whatsapp} error={errorRow?.value} />
       <div className="grid gap-3 md:grid-cols-4">
         <Stat title="לידים פתוחים" value={leads.filter((l) => l.stage !== "LOST").length} />
         <Stat title="ממתינים לחתימה" value={waitingSign.length} />

@@ -1,5 +1,7 @@
 import { InboxApp } from "@/components/inbox-app";
+import { WhatsAppAccountCard } from "@/components/whatsapp-account-card";
 import { prisma } from "@/lib/prisma";
+import { getStoredWhatsAppAccount } from "@/lib/whatsapp/account";
 
 export default async function InboxPage({
   searchParams,
@@ -7,7 +9,7 @@ export default async function InboxPage({
   searchParams: Promise<{ c?: string }>;
 }) {
   const { c } = await searchParams;
-  const [conversations, templates] = await Promise.all([
+  const [conversations, templates, account, errorRow] = await Promise.all([
     prisma.conversation.findMany({
       orderBy: { lastAt: "desc" },
       include: {
@@ -16,6 +18,8 @@ export default async function InboxPage({
       },
     }),
     prisma.messageTemplate.findMany({ orderBy: { title: "asc" } }),
+    getStoredWhatsAppAccount(),
+    prisma.appSetting.findUnique({ where: { key: "whatsapp_last_error" } }),
   ]);
 
   return (
@@ -26,6 +30,7 @@ export default async function InboxPage({
           הודעות מ-WhatsApp Business ופניות מקמפיין Click to WhatsApp נכנסות לכאן כליד.
         </p>
       </div>
+      <WhatsAppAccountCard account={account} error={errorRow?.value} />
       <InboxApp
         conversations={conversations}
         templates={templates}

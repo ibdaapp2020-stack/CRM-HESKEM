@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireStaff } from "../auth";
 import { prisma } from "../prisma";
 import { getWhatsAppConfig } from "../whatsapp";
+import { refreshWhatsAppAccountFromMeta } from "../whatsapp/account";
 
 export async function saveWhatsAppSettingsAction(formData: FormData) {
   const staff = await requireStaff();
@@ -26,13 +27,38 @@ export async function saveWhatsAppSettingsAction(formData: FormData) {
     });
   }
 
+  let accountNote = "עודכנו הגדרות וואטסאפ";
+  try {
+    const account = await refreshWhatsAppAccountFromMeta();
+    if (account.connected && (account.displayName || account.displayPhone)) {
+      accountNote = `וואטסאפ מחובר: ${account.displayName || ""} ${account.displayPhone || ""}`.trim();
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "שגיאה בחיבור Meta";
+    await prisma.appSetting.upsert({
+      where: { key: "whatsapp_last_error" },
+      update: { value: message },
+      create: { key: "whatsapp_last_error", value: message },
+    });
+    accountNote = `הגדרות נשמרו, חיבור Meta נכשל: ${message}`;
+  }
+
   await prisma.activity.create({
     data: {
       actorId: staff.id,
       type: "settings",
-      message: "עודכנו הגדרות וואטסאפ",
+      message: accountNote,
     },
   });
+  revalidatePath("/office");
+  revalidatePath("/office/settings");
+  revalidatePath("/office/inbox");
+}
+
+export async function refreshWhatsAppAccountAction() {
+  await requireStaff();
+  await refreshWhatsAppAccountFromMeta();
+  revalidatePath("/office");
   revalidatePath("/office/settings");
   revalidatePath("/office/inbox");
 }
