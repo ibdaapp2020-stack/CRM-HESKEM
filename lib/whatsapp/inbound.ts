@@ -56,23 +56,24 @@ export async function ingestInboundWhatsApp(msg: InboundMessage) {
     });
   }
 
-  if (!lead.conversation) {
+  let conversationId = lead.conversation?.id;
+  if (!conversationId) {
     const conversation = await prisma.conversation.create({
       data: { leadId: lead.id, channel: "cloud_api" },
     });
-    lead = { ...lead, conversation };
+    conversationId = conversation.id;
   }
 
   await prisma.message.create({
     data: {
-      conversationId: lead.conversation.id,
+      conversationId,
       direction: "inbound",
       channel: "cloud_api",
       body: msg.body,
     },
   });
   await prisma.conversation.update({
-    where: { id: lead.conversation.id },
+    where: { id: conversationId },
     data: { lastAt: new Date(), unread: { increment: 1 }, channel: "cloud_api" },
   });
   await prisma.activity.create({
