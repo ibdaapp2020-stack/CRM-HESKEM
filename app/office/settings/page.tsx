@@ -38,19 +38,22 @@ export default async function SettingsPage() {
             >
               Meta for Developers
             </a>{" "}
-            והוסיפו מוצר WhatsApp ל-WABA שלכם.
+            ← האפליקציה שלכם ← WhatsApp ← API Setup.
           </li>
           <li>
-            צרו System User עם הרשאות whatsapp_business_messaging ו-whatsapp_business_management,
-            והפיקו Permanent Access Token.
-          </li>
-          <li>העתיקו Phone Number ID (לא את מספר הטלפון עצמו).</li>
-          <li>
-            ב-Webhook הדביקו: <span className="break-all text-cyan-2">{webhook}</span>
+            העתיקו משם את Access Token (כפתור Generate access token), Phone number ID ו-WhatsApp
+            Business Account ID — לא את מספר הטלפון עצמו. לשימוש קבוע הפיקו Token של System User
+            עם whatsapp_business_messaging ו-whatsapp_business_management.
           </li>
           <li>
-            Verify Token: <span className="text-cyan-2">{cfg.verifyToken || "ibda-wa-verify"}</span>
-            {" "}— Subscribe לאירוע messages.
+            הדביקו בטופס שלמטה ושמרו. המערכת מושכת את שם העסק והמספר, ורושמת את ה-Webhook ב-Meta
+            באופן אוטומטי.
+          </li>
+          <li>
+            אם בכרטיס החשבון מופיעה שגיאת Webhook, הגדירו ידנית ב-Meta: Callback URL{" "}
+            <span className="break-all text-cyan-2">{webhook}</span>, Verify Token{" "}
+            <span className="text-cyan-2">{cfg.verifyToken || "ibda-wa-verify"}</span>, והירשמו
+            לאירוע messages.
           </li>
           <li>{t("whatsappCoexistence")}</li>
         </ol>
@@ -73,6 +76,9 @@ export default async function SettingsPage() {
           </Field>
           <Field label="Phone Number ID">
             <Input name="phoneNumberId" defaultValue={cfg.phoneNumberId} />
+          </Field>
+          <Field label="WhatsApp Business Account ID (WABA)">
+            <Input name="wabaId" defaultValue={account.wabaId} />
           </Field>
           <Field label="Verify Token">
             <Input name="verifyToken" defaultValue={cfg.verifyToken} />

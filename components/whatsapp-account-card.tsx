@@ -29,8 +29,17 @@ export function WhatsAppAccountCard({
             <div className="space-y-1 text-sm">
               <div className="text-lg font-semibold">{title}</div>
               {phone && <div className="text-cyan-2">{phone}</div>}
-              {account.quality && (
-                <div className="text-xs text-muted">איכות: {account.quality}</div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {account.quality && <Badge tone="slate">איכות: {account.quality}</Badge>}
+                {account.phoneStatus && <Badge tone="slate">{account.phoneStatus}</Badge>}
+                {account.webhookStatus === "ok" ? (
+                  <Badge tone="green">Webhook פעיל</Badge>
+                ) : account.webhookStatus ? (
+                  <Badge tone="amber">Webhook לא נרשם</Badge>
+                ) : null}
+              </div>
+              {account.webhookStatus && account.webhookStatus !== "ok" && (
+                <p className="text-xs text-amber-200">{account.webhookStatus}</p>
               )}
             </div>
           ) : (

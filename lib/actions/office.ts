@@ -12,6 +12,7 @@ export async function saveWhatsAppSettingsAction(formData: FormData) {
     ["whatsapp_provider", String(formData.get("provider") || "inbox")],
     ["whatsapp_token", String(formData.get("token") || "").trim()],
     ["whatsapp_phone_id", String(formData.get("phoneNumberId") || "").trim()],
+    ["whatsapp_waba_id", String(formData.get("wabaId") || "").trim()],
     ["whatsapp_verify_token", String(formData.get("verifyToken") || "").trim()],
     ["whatsapp_app_secret", String(formData.get("appSecret") || "").trim()],
   ] as const;
@@ -32,6 +33,7 @@ export async function saveWhatsAppSettingsAction(formData: FormData) {
     const account = await refreshWhatsAppAccountFromMeta();
     if (account.connected && (account.displayName || account.displayPhone)) {
       accountNote = `וואטסאפ מחובר: ${account.displayName || ""} ${account.displayPhone || ""}`.trim();
+      if (account.webhookStatus === "ok") accountNote += " · Webhook נרשם ב-Meta";
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "שגיאה בחיבור Meta";
@@ -57,7 +59,16 @@ export async function saveWhatsAppSettingsAction(formData: FormData) {
 
 export async function refreshWhatsAppAccountAction() {
   await requireStaff();
-  await refreshWhatsAppAccountFromMeta();
+  try {
+    await refreshWhatsAppAccountFromMeta();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "שגיאה בחיבור Meta";
+    await prisma.appSetting.upsert({
+      where: { key: "whatsapp_last_error" },
+      update: { value: message },
+      create: { key: "whatsapp_last_error", value: message },
+    });
+  }
   revalidatePath("/office");
   revalidatePath("/office/settings");
   revalidatePath("/office/inbox");
