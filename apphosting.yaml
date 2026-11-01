@@ -19,6 +19,11 @@ env:
     value: inbox
     availability:
       - RUNTIME
+  - variable: WHATSAPP_VERIFY_TOKEN
+    value: ibda-wa-verify
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: DATABASE_URL
     secret: DATABASE_URL
     availability:

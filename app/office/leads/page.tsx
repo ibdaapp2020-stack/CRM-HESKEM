@@ -6,6 +6,7 @@ import { STAGES } from "@/lib/pipeline";
 import { industryLabel } from "@/lib/industries";
 import { getT } from "@/lib/locale";
 import { STAGE_I18N } from "@/lib/i18n";
+import { CampaignBadge } from "@/components/campaign-badge";
 import { formatDateTime } from "@/lib/utils";
 
 export default async function LeadsPage({
@@ -26,6 +27,7 @@ export default async function LeadsPage({
                 { fullName: { contains: q } },
                 { phone: { contains: q } },
                 { company: { contains: q } },
+                { campaignHeadline: { contains: q } },
               ],
             }
           : {},
@@ -81,6 +83,7 @@ export default async function LeadsPage({
             <tr>
               <th className="px-4 py-3 text-start font-normal">{t("pipeline")}</th>
               <th className="px-4 py-3 text-start font-normal">{t("phone")}</th>
+              <th className="px-4 py-3 text-start font-normal">{t("campaign")}</th>
               <th className="px-4 py-3 text-start font-normal">{t("industry")}</th>
               <th className="px-4 py-3 text-start font-normal">{t("stage")}</th>
               <th className="px-4 py-3 text-start font-normal">{t("score")}</th>
@@ -99,6 +102,12 @@ export default async function LeadsPage({
                   )}
                 </td>
                 <td className="px-4 py-3 text-muted">{lead.phone}</td>
+                <td className="px-4 py-3">
+                  <CampaignBadge
+                    source={lead.source}
+                    headline={lead.campaignHeadline}
+                  />
+                </td>
                 <td className="px-4 py-3 text-muted">{industryLabel(lead.industry)}</td>
                 <td className="px-4 py-3">
                   <StageBadge stage={lead.stage} />
@@ -109,7 +118,7 @@ export default async function LeadsPage({
             ))}
             {leads.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-muted">
+                <td colSpan={7} className="px-4 py-8 text-center text-muted">
                   —
                 </td>
               </tr>

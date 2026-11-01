@@ -6,6 +6,7 @@ import {
   saveSystemAccessAction,
   updateRetainerEntryAction,
 } from "@/lib/actions/office";
+import { CampaignBadge } from "@/components/campaign-badge";
 import { formatDate, formatMoney } from "@/lib/utils";
 import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
@@ -57,6 +58,8 @@ export function CustomerCard({
   receipts,
   accesses,
   plans,
+  source,
+  campaignHeadline,
 }: {
   leadId: string;
   locale: Locale;
@@ -64,6 +67,8 @@ export function CustomerCard({
   receipts: Receipt[];
   accesses: Access[];
   plans: Plan[];
+  source?: string | null;
+  campaignHeadline?: string | null;
 }) {
   const received = receipts.reduce((sum, r) => sum + r.amount, 0);
   const tr = (key: string) => t(locale, key);
@@ -72,7 +77,10 @@ export function CustomerCard({
   return (
     <div className="space-y-4">
       <Card className="p-4">
-        <h2 className="mb-3 font-medium">{tr("customerCard")}</h2>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <h2 className="font-medium">{tr("customerCard")}</h2>
+          <CampaignBadge source={source} headline={campaignHeadline} />
+        </div>
         <div className="grid grid-cols-3 gap-2 text-sm">
           <div>
             <div className="text-xs text-muted">{tr("quoted")}</div>

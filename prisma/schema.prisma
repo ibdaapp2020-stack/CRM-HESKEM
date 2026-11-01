@@ -31,13 +31,17 @@ model Lead {
   phone        String
   email        String?
   company      String?
-  source       String   @default("whatsapp")
-  industry     String   @default("general")
-  locale       String   @default("he")
-  stage        String   @default("NEW_LEAD")
-  score        Int      @default(0)
-  tags         String   @default("[]")
-  notes        String?
+  source            String   @default("whatsapp")
+  campaignId        String?
+  campaignName      String?
+  campaignHeadline  String?
+  ctwaClid          String?
+  industry          String   @default("general")
+  locale            String   @default("he")
+  stage             String   @default("NEW_LEAD")
+  score             Int      @default(0)
+  tags              String   @default("[]")
+  notes             String?
   lostReason   String?
   ownerId      String?
   owner        User?    @relation("LeadOwner", fields: [ownerId], references: [id])

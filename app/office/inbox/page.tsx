@@ -23,7 +23,7 @@ export default async function InboxPage({
       <div>
         <h1 className="text-2xl font-bold">תיבת וואטסאפ</h1>
         <p className="text-sm text-muted">
-          תיבה פנימית עכשיו. מוכן לחיבור Meta Cloud API בלי לשנות את המסך.
+          הודעות מ-WhatsApp Business ופניות מקמפיין Click to WhatsApp נכנסות לכאן כליד.
         </p>
       </div>
       <InboxApp

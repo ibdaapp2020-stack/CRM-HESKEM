@@ -4430,6 +4430,10 @@ export namespace Prisma {
     email: string | null
     company: string | null
     source: string | null
+    campaignId: string | null
+    campaignName: string | null
+    campaignHeadline: string | null
+    ctwaClid: string | null
     industry: string | null
     locale: string | null
     stage: string | null
@@ -4450,6 +4454,10 @@ export namespace Prisma {
     email: string | null
     company: string | null
     source: string | null
+    campaignId: string | null
+    campaignName: string | null
+    campaignHeadline: string | null
+    ctwaClid: string | null
     industry: string | null
     locale: string | null
     stage: string | null
@@ -4470,6 +4478,10 @@ export namespace Prisma {
     email: number
     company: number
     source: number
+    campaignId: number
+    campaignName: number
+    campaignHeadline: number
+    ctwaClid: number
     industry: number
     locale: number
     stage: number
@@ -4500,6 +4512,10 @@ export namespace Prisma {
     email?: true
     company?: true
     source?: true
+    campaignId?: true
+    campaignName?: true
+    campaignHeadline?: true
+    ctwaClid?: true
     industry?: true
     locale?: true
     stage?: true
@@ -4520,6 +4536,10 @@ export namespace Prisma {
     email?: true
     company?: true
     source?: true
+    campaignId?: true
+    campaignName?: true
+    campaignHeadline?: true
+    ctwaClid?: true
     industry?: true
     locale?: true
     stage?: true
@@ -4540,6 +4560,10 @@ export namespace Prisma {
     email?: true
     company?: true
     source?: true
+    campaignId?: true
+    campaignName?: true
+    campaignHeadline?: true
+    ctwaClid?: true
     industry?: true
     locale?: true
     stage?: true
@@ -4647,6 +4671,10 @@ export namespace Prisma {
     email: string | null
     company: string | null
     source: string
+    campaignId: string | null
+    campaignName: string | null
+    campaignHeadline: string | null
+    ctwaClid: string | null
     industry: string
     locale: string
     stage: string
@@ -4686,6 +4714,10 @@ export namespace Prisma {
     email?: boolean
     company?: boolean
     source?: boolean
+    campaignId?: boolean
+    campaignName?: boolean
+    campaignHeadline?: boolean
+    ctwaClid?: boolean
     industry?: boolean
     locale?: boolean
     stage?: boolean
@@ -4721,6 +4753,10 @@ export namespace Prisma {
     email?: boolean
     company?: boolean
     source?: boolean
+    campaignId?: boolean
+    campaignName?: boolean
+    campaignHeadline?: boolean
+    ctwaClid?: boolean
     industry?: boolean
     locale?: boolean
     stage?: boolean
@@ -4743,6 +4779,10 @@ export namespace Prisma {
     email?: boolean
     company?: boolean
     source?: boolean
+    campaignId?: boolean
+    campaignName?: boolean
+    campaignHeadline?: boolean
+    ctwaClid?: boolean
     industry?: boolean
     locale?: boolean
     stage?: boolean
@@ -4765,6 +4805,10 @@ export namespace Prisma {
     email?: boolean
     company?: boolean
     source?: boolean
+    campaignId?: boolean
+    campaignName?: boolean
+    campaignHeadline?: boolean
+    ctwaClid?: boolean
     industry?: boolean
     locale?: boolean
     stage?: boolean
@@ -4778,7 +4822,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type LeadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "phone" | "email" | "company" | "source" | "industry" | "locale" | "stage" | "score" | "tags" | "notes" | "lostReason" | "ownerId" | "clientUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
+  export type LeadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "phone" | "email" | "company" | "source" | "campaignId" | "campaignName" | "campaignHeadline" | "ctwaClid" | "industry" | "locale" | "stage" | "score" | "tags" | "notes" | "lostReason" | "ownerId" | "clientUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
   export type LeadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     owner?: boolean | Lead$ownerArgs<ExtArgs>
     clientUser?: boolean | Lead$clientUserArgs<ExtArgs>
@@ -4830,6 +4874,10 @@ export namespace Prisma {
       email: string | null
       company: string | null
       source: string
+      campaignId: string | null
+      campaignName: string | null
+      campaignHeadline: string | null
+      ctwaClid: string | null
       industry: string
       locale: string
       stage: string
@@ -5284,6 +5332,10 @@ export namespace Prisma {
     readonly email: FieldRef<"Lead", 'String'>
     readonly company: FieldRef<"Lead", 'String'>
     readonly source: FieldRef<"Lead", 'String'>
+    readonly campaignId: FieldRef<"Lead", 'String'>
+    readonly campaignName: FieldRef<"Lead", 'String'>
+    readonly campaignHeadline: FieldRef<"Lead", 'String'>
+    readonly ctwaClid: FieldRef<"Lead", 'String'>
     readonly industry: FieldRef<"Lead", 'String'>
     readonly locale: FieldRef<"Lead", 'String'>
     readonly stage: FieldRef<"Lead", 'String'>
@@ -29765,6 +29817,10 @@ export namespace Prisma {
     email: 'email',
     company: 'company',
     source: 'source',
+    campaignId: 'campaignId',
+    campaignName: 'campaignName',
+    campaignHeadline: 'campaignHeadline',
+    ctwaClid: 'ctwaClid',
     industry: 'industry',
     locale: 'locale',
     stage: 'stage',
@@ -30276,6 +30332,10 @@ export namespace Prisma {
     email?: StringNullableFilter<"Lead"> | string | null
     company?: StringNullableFilter<"Lead"> | string | null
     source?: StringFilter<"Lead"> | string
+    campaignId?: StringNullableFilter<"Lead"> | string | null
+    campaignName?: StringNullableFilter<"Lead"> | string | null
+    campaignHeadline?: StringNullableFilter<"Lead"> | string | null
+    ctwaClid?: StringNullableFilter<"Lead"> | string | null
     industry?: StringFilter<"Lead"> | string
     locale?: StringFilter<"Lead"> | string
     stage?: StringFilter<"Lead"> | string
@@ -30310,6 +30370,10 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     company?: SortOrderInput | SortOrder
     source?: SortOrder
+    campaignId?: SortOrderInput | SortOrder
+    campaignName?: SortOrderInput | SortOrder
+    campaignHeadline?: SortOrderInput | SortOrder
+    ctwaClid?: SortOrderInput | SortOrder
     industry?: SortOrder
     locale?: SortOrder
     stage?: SortOrder
@@ -30348,6 +30412,10 @@ export namespace Prisma {
     email?: StringNullableFilter<"Lead"> | string | null
     company?: StringNullableFilter<"Lead"> | string | null
     source?: StringFilter<"Lead"> | string
+    campaignId?: StringNullableFilter<"Lead"> | string | null
+    campaignName?: StringNullableFilter<"Lead"> | string | null
+    campaignHeadline?: StringNullableFilter<"Lead"> | string | null
+    ctwaClid?: StringNullableFilter<"Lead"> | string | null
     industry?: StringFilter<"Lead"> | string
     locale?: StringFilter<"Lead"> | string
     stage?: StringFilter<"Lead"> | string
@@ -30381,6 +30449,10 @@ export namespace Prisma {
     email?: SortOrderInput | SortOrder
     company?: SortOrderInput | SortOrder
     source?: SortOrder
+    campaignId?: SortOrderInput | SortOrder
+    campaignName?: SortOrderInput | SortOrder
+    campaignHeadline?: SortOrderInput | SortOrder
+    ctwaClid?: SortOrderInput | SortOrder
     industry?: SortOrder
     locale?: SortOrder
     stage?: SortOrder
@@ -30409,6 +30481,10 @@ export namespace Prisma {
     email?: StringNullableWithAggregatesFilter<"Lead"> | string | null
     company?: StringNullableWithAggregatesFilter<"Lead"> | string | null
     source?: StringWithAggregatesFilter<"Lead"> | string
+    campaignId?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    campaignName?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    campaignHeadline?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    ctwaClid?: StringNullableWithAggregatesFilter<"Lead"> | string | null
     industry?: StringWithAggregatesFilter<"Lead"> | string
     locale?: StringWithAggregatesFilter<"Lead"> | string
     stage?: StringWithAggregatesFilter<"Lead"> | string
@@ -32107,6 +32183,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -32139,6 +32219,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -32171,6 +32255,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -32203,6 +32291,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -32235,6 +32327,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -32255,6 +32351,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -32273,6 +32373,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -34286,6 +34390,10 @@ export namespace Prisma {
     email?: SortOrder
     company?: SortOrder
     source?: SortOrder
+    campaignId?: SortOrder
+    campaignName?: SortOrder
+    campaignHeadline?: SortOrder
+    ctwaClid?: SortOrder
     industry?: SortOrder
     locale?: SortOrder
     stage?: SortOrder
@@ -34310,6 +34418,10 @@ export namespace Prisma {
     email?: SortOrder
     company?: SortOrder
     source?: SortOrder
+    campaignId?: SortOrder
+    campaignName?: SortOrder
+    campaignHeadline?: SortOrder
+    ctwaClid?: SortOrder
     industry?: SortOrder
     locale?: SortOrder
     stage?: SortOrder
@@ -34330,6 +34442,10 @@ export namespace Prisma {
     email?: SortOrder
     company?: SortOrder
     source?: SortOrder
+    campaignId?: SortOrder
+    campaignName?: SortOrder
+    campaignHeadline?: SortOrder
+    ctwaClid?: SortOrder
     industry?: SortOrder
     locale?: SortOrder
     stage?: SortOrder
@@ -36905,6 +37021,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -36936,6 +37056,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -36977,6 +37101,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -37008,6 +37136,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -37149,6 +37281,10 @@ export namespace Prisma {
     email?: StringNullableFilter<"Lead"> | string | null
     company?: StringNullableFilter<"Lead"> | string | null
     source?: StringFilter<"Lead"> | string
+    campaignId?: StringNullableFilter<"Lead"> | string | null
+    campaignName?: StringNullableFilter<"Lead"> | string | null
+    campaignHeadline?: StringNullableFilter<"Lead"> | string | null
+    ctwaClid?: StringNullableFilter<"Lead"> | string | null
     industry?: StringFilter<"Lead"> | string
     locale?: StringFilter<"Lead"> | string
     stage?: StringFilter<"Lead"> | string
@@ -37180,6 +37316,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -37211,6 +37351,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -38242,6 +38386,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -38273,6 +38421,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -38320,6 +38472,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -38351,6 +38507,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -38382,6 +38542,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -38413,6 +38577,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -38490,6 +38658,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -38521,6 +38693,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -38692,6 +38868,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -38723,6 +38903,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -38832,6 +39016,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -38863,6 +39051,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39203,6 +39395,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39234,6 +39430,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39316,6 +39516,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39347,6 +39551,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39419,6 +39627,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39450,6 +39662,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39527,6 +39743,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39558,6 +39778,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39675,6 +39899,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39706,6 +39934,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39753,6 +39985,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39784,6 +40020,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39815,6 +40055,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39846,6 +40090,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39893,6 +40141,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39924,6 +40176,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -39955,6 +40211,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -39986,6 +40246,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40033,6 +40297,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40064,6 +40332,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40095,6 +40367,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40126,6 +40402,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40173,6 +40453,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40204,6 +40488,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40235,6 +40523,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40266,6 +40558,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40337,6 +40633,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40368,6 +40668,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40494,6 +40798,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40525,6 +40833,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40602,6 +40914,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40633,6 +40949,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40754,6 +41074,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40785,6 +41109,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -40867,6 +41195,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40898,6 +41230,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -40970,6 +41306,10 @@ export namespace Prisma {
     email?: string | null
     company?: string | null
     source?: string
+    campaignId?: string | null
+    campaignName?: string | null
+    campaignHeadline?: string | null
+    ctwaClid?: string | null
     industry?: string
     locale?: string
     stage?: string
@@ -41017,6 +41357,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -41048,6 +41392,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string
@@ -41079,6 +41427,10 @@ export namespace Prisma {
     email?: NullableStringFieldUpdateOperationsInput | string | null
     company?: NullableStringFieldUpdateOperationsInput | string | null
     source?: StringFieldUpdateOperationsInput | string
+    campaignId?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignName?: NullableStringFieldUpdateOperationsInput | string | null
+    campaignHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    ctwaClid?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: StringFieldUpdateOperationsInput | string
     locale?: StringFieldUpdateOperationsInput | string
     stage?: StringFieldUpdateOperationsInput | string

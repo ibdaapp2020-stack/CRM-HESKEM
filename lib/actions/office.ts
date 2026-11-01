@@ -12,6 +12,7 @@ export async function saveWhatsAppSettingsAction(formData: FormData) {
     ["whatsapp_token", String(formData.get("token") || "").trim()],
     ["whatsapp_phone_id", String(formData.get("phoneNumberId") || "").trim()],
     ["whatsapp_verify_token", String(formData.get("verifyToken") || "").trim()],
+    ["whatsapp_app_secret", String(formData.get("appSecret") || "").trim()],
   ] as const;
 
   for (const [key, value] of entries) {

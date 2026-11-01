@@ -8,6 +8,7 @@ import {
   sendMessageAction,
 } from "@/lib/actions/messages";
 import { formatDateTime } from "@/lib/utils";
+import { CampaignBadge } from "./campaign-badge";
 import { Button, Input, Textarea } from "./ui";
 
 type Template = { key: string; title: string; body: string };
@@ -21,7 +22,14 @@ type ConversationRow = {
   id: string;
   unread: number;
   lastAt: Date | string;
-  lead: { id: string; fullName: string; phone: string; stage: string };
+  lead: {
+    id: string;
+    fullName: string;
+    phone: string;
+    stage: string;
+    source?: string | null;
+    campaignHeadline?: string | null;
+  };
   messages: Message[];
 };
 
@@ -48,7 +56,7 @@ export function InboxApp({
     <div className="grid min-h-[70vh] overflow-hidden rounded-2xl border border-line bg-navy-2 md:grid-cols-[320px_1fr]">
       <aside className="border-l border-line">
         <div className="border-b border-line px-4 py-3 text-sm text-muted">
-          תיבת וואטסאפ פנימית
+          תיבת וואטסאפ — שיחות אמיתיות וקמפיינים
         </div>
         <div className="max-h-[70vh] overflow-y-auto">
           {conversations.map((c) => (
@@ -72,6 +80,10 @@ export function InboxApp({
                 )}
               </div>
               <span className="text-xs text-muted">{c.lead.phone}</span>
+              <CampaignBadge
+                source={c.lead.source}
+                headline={c.lead.campaignHeadline}
+              />
               <span className="line-clamp-1 text-xs text-muted">
                 {c.messages.at(-1)?.body}
               </span>
@@ -86,6 +98,12 @@ export function InboxApp({
               <div>
                 <div className="font-medium">{selected.lead.fullName}</div>
                 <div className="text-xs text-muted">{selected.lead.phone}</div>
+                <div className="mt-1">
+                  <CampaignBadge
+                    source={selected.lead.source}
+                    headline={selected.lead.campaignHeadline}
+                  />
+                </div>
               </div>
               <Button
                 type="button"

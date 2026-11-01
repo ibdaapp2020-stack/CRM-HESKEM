@@ -5,6 +5,7 @@ export type WhatsAppConfig = {
   token: string;
   phoneNumberId: string;
   verifyToken: string;
+  appSecret: string;
 };
 
 export type OutboundMessage = {
@@ -13,10 +14,21 @@ export type OutboundMessage = {
   templateKey?: string;
 };
 
+export type CampaignReferral = {
+  sourceId?: string;
+  sourceUrl?: string;
+  sourceType?: string;
+  headline?: string;
+  body?: string;
+  ctwaClid?: string;
+};
+
 export type InboundMessage = {
   fromPhone: string;
   body: string;
   externalId?: string;
+  profileName?: string;
+  referral?: CampaignReferral;
 };
 
 export interface WhatsAppProvider {

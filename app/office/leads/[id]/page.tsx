@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { StageBadge } from "@/components/stage-badge";
 import { IndustryField, LeadWorkflow } from "@/components/lead-workflow";
+import { CampaignBadge } from "@/components/campaign-badge";
 import { CustomerCard } from "@/components/customer-card";
 import { updateLeadDetailsAction } from "@/lib/actions/leads";
 import { prisma } from "@/lib/prisma";
@@ -42,6 +43,10 @@ export default async function LeadDetailPage({
           <h1 className="text-2xl font-bold">{lead.fullName}</h1>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted">
             <StageBadge stage={lead.stage} />
+            <CampaignBadge
+              source={lead.source}
+              headline={lead.campaignHeadline}
+            />
             <span>{industryLabel(lead.industry)}</span>
             <span>ציון {lead.score}</span>
             <span>{lead.phone}</span>
@@ -116,6 +121,8 @@ export default async function LeadDetailPage({
         receipts={lead.receipts}
         accesses={lead.systemAccesses}
         plans={lead.retainerPlans}
+        source={lead.source}
+        campaignHeadline={lead.campaignHeadline}
       />
     </div>
   );
