@@ -30,11 +30,17 @@ export default async function LoginPage({
         </p>
         {params.error && (
           <div className="mb-4 rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
-            {locale === "en"
-              ? "Wrong email or password"
-              : locale === "ar"
-                ? "بريد أو كلمة مرور غير صحيحة"
-                : "אימייל או סיסמה שגויים"}
+            {params.error === "server"
+              ? locale === "en"
+                ? "Server error: database or AUTH_SECRET is not configured. Check the environment variables."
+                : locale === "ar"
+                  ? "خطأ في الخادم: قاعدة البيانات أو AUTH_SECRET غير مضبوطة."
+                  : "שגיאת שרת: מסד הנתונים או AUTH_SECRET לא מוגדרים. בדוק את משתני הסביבה."
+              : locale === "en"
+                ? "Wrong email or password"
+                : locale === "ar"
+                  ? "بريد أو كلمة مرور غير صحيحة"
+                  : "אימייל או סיסמה שגויים"}
           </div>
         )}
         <form action={loginAction} className="space-y-4">
