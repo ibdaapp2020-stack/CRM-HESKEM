@@ -1,5 +1,4 @@
 import { nanoid } from "nanoid";
-import { getAuth } from "firebase-admin/auth";
 import { FieldValue, type DocumentData } from "firebase-admin/firestore";
 import { getAdminApp, getAdminFirestore, getAdminStorage, isAdminConfigured } from "@/lib/firebase/admin";
 
@@ -117,6 +116,7 @@ export async function upsertAuthUser(input: {
   password?: string;
   role: "STAFF" | "CLIENT";
 }) {
+  const { getAuth } = await import("firebase-admin/auth");
   const auth = getAuth(getAdminApp());
   const email = input.email.trim().toLowerCase();
   let record;
