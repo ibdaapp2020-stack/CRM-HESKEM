@@ -18,11 +18,7 @@ export async function GET(request: Request) {
   if (url.searchParams.get("hub.mode") === "subscribe") {
     return new NextResponse("forbidden", { status: 403 });
   }
-  return NextResponse.json({
-    ok: true,
-    webhook: "ready",
-    verifyTokenHint: "ibda-wa-verify",
-  });
+  return NextResponse.json({ ok: true, webhook: "ready" });
 }
 
 export async function POST(request: Request) {

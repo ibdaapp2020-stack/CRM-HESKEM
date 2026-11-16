@@ -1,9 +1,28 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getPaymentProvider } from "@/lib/payments";
+import {
+  PAYMENT_SIGNATURE_HEADER,
+  verifyPaymentWebhook,
+} from "@/lib/payments/verify-webhook";
 
 export async function POST(request: Request) {
-  const payload = await request.json().catch(() => null);
+  const rawBody = await request.text();
+  const signature = request.headers.get(PAYMENT_SIGNATURE_HEADER);
+  if (
+    !verifyPaymentWebhook(rawBody, signature, process.env.PAYMENT_WEBHOOK_SECRET)
+  ) {
+    console.error("[payments] rejected unsigned webhook");
+    return NextResponse.json({ ok: false }, { status: 401 });
+  }
+
+  let payload: unknown = null;
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ ok: false }, { status: 400 });
+  }
+
   const provider = getPaymentProvider();
   const parsed = provider.parseWebhook?.(payload);
   if (!parsed) {

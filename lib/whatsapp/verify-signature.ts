@@ -5,7 +5,8 @@ export function verifyMetaSignature(
   signatureHeader: string | null,
   appSecret: string,
 ) {
-  if (!appSecret) return true;
+  // Fail closed: an unsigned webhook is not accepted when the app secret is missing.
+  if (!appSecret) return false;
   if (!signatureHeader?.startsWith("sha256=")) return false;
   const expected = createHmac("sha256", appSecret).update(rawBody).digest("hex");
   const received = signatureHeader.slice("sha256=".length);

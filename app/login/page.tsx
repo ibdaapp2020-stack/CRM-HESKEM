@@ -46,7 +46,7 @@ export default async function LoginPage({
         <form action={loginAction} className="space-y-4">
           <input type="hidden" name="next" value={params.next ?? ""} />
           <Field label={locale === "en" ? "Email" : locale === "ar" ? "البريد" : "אימייל"}>
-            <Input name="email" type="email" required placeholder="admin@ibda.co.il" />
+            <Input name="email" type="email" required />
           </Field>
           <Field label={t("password")}>
             <Input name="password" type="password" required />
@@ -55,10 +55,6 @@ export default async function LoginPage({
             {t("login")}
           </Button>
         </form>
-        <div className="mt-6 space-y-1 text-xs text-muted">
-          <div>משרד: admin@ibda.co.il / Ibda2026!</div>
-          <div>לקוח: client@demo.co.il / Client2026!</div>
-        </div>
       </Card>
     </div>
   );

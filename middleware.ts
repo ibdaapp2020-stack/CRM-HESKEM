@@ -4,9 +4,9 @@ import { NextResponse, type NextRequest } from "next/server";
 const COOKIE = process.env.AUTH_COOKIE || "ibda_session";
 
 function secret() {
-  return new TextEncoder().encode(
-    process.env.AUTH_SECRET || "ibda-crm-dev-secret-change-in-production-2026",
-  );
+  const value = process.env.AUTH_SECRET;
+  if (!value) return null;
+  return new TextEncoder().encode(value);
 }
 
 export async function middleware(request: NextRequest) {
@@ -14,9 +14,10 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get(COOKIE)?.value;
   let role: string | null = null;
 
-  if (token) {
+  const key = secret();
+  if (token && key) {
     try {
-      const { payload } = await jwtVerify(token, secret());
+      const { payload } = await jwtVerify(token, key);
       role = typeof payload.role === "string" ? payload.role : null;
     } catch {
       role = null;

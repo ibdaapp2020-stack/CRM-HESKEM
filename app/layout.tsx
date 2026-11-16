@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { Cairo, Heebo } from "next/font/google";
 import "./globals.css";
@@ -19,7 +20,11 @@ export const metadata: Metadata = {
   description: "ניהול לידים, וואטסאפ, הצעות מחיר ופורטל לקוח",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const locale = await getLocale();
   const dir = LOCALE_META[locale].dir;
   return (
