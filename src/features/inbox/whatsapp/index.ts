@@ -8,6 +8,8 @@ export async function getWhatsAppConfig(): Promise<WhatsAppConfig> {
     "whatsapp_provider",
     "whatsapp_token",
     "whatsapp_phone_id",
+    "whatsapp_business_account_id",
+    "whatsapp_waba_id",
     "whatsapp_verify_token",
     "whatsapp_app_secret",
   ]);
@@ -16,11 +18,14 @@ export async function getWhatsAppConfig(): Promise<WhatsAppConfig> {
     provider: map.whatsapp_provider || process.env.WHATSAPP_PROVIDER || "inbox",
     token: map.whatsapp_token || process.env.WHATSAPP_ACCESS_TOKEN || "",
     phoneNumberId: map.whatsapp_phone_id || process.env.WHATSAPP_PHONE_NUMBER_ID || "",
-    verifyToken:
-      map.whatsapp_verify_token ||
-      process.env.WHATSAPP_VERIFY_TOKEN ||
-      "ibda-wa-verify",
-    appSecret: map.whatsapp_app_secret || process.env.WHATSAPP_APP_SECRET || "",
+    businessAccountId:
+      map.whatsapp_business_account_id ||
+      map.whatsapp_waba_id ||
+      process.env.WHATSAPP_BUSINESS_ACCOUNT_ID ||
+      "",
+    verifyToken: map.whatsapp_verify_token || process.env.WHATSAPP_VERIFY_TOKEN || "",
+    appSecret:
+      map.whatsapp_app_secret || process.env.META_APP_SECRET || process.env.WHATSAPP_APP_SECRET || "",
   };
 }
 

@@ -4,6 +4,7 @@ export type WhatsAppConfig = {
   provider: string;
   token: string;
   phoneNumberId: string;
+  businessAccountId: string;
   verifyToken: string;
   appSecret: string;
 };
@@ -12,6 +13,10 @@ export type OutboundMessage = {
   toPhone: string;
   body: string;
   templateKey?: string;
+  templateName?: string;
+  templateLanguage?: string;
+  mediaId?: string;
+  mediaType?: "image" | "audio" | "video" | "document";
 };
 
 export type CampaignReferral = {

@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test tests/security.test.ts tests/firestore-map.test.ts",
+    "test": "tsx --test tests/security.test.ts tests/firestore-map.test.ts tests/inbox-meta.test.ts",
     "firestore:migrate": "tsx scripts/migrate-to-firestore.ts"
   },
   "dependencies": {

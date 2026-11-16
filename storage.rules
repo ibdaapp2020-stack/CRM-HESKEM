@@ -11,6 +11,10 @@ service firebase.storage {
         && firestore.get(/databases/(default)/documents/leads/$(leadId)).data.authUid == request.auth.uid;
     }
 
+    match /inbox/{conversationId}/{path=**} {
+      allow read, write: if isStaff();
+    }
+
     match /leads/{leadId}/{path=**} {
       allow read: if isStaff() || ownsLead(leadId);
       allow write: if isStaff();

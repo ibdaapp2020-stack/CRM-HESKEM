@@ -100,6 +100,8 @@ function leadDefaults(data: Row): Row {
     score: data.score ?? 0,
     tags: data.tags ?? "[]",
     notes: data.notes ?? null,
+    instagramUserId: data.instagramUserId ?? null,
+    instagramUsername: data.instagramUsername ?? null,
     lostReason: data.lostReason ?? null,
     ownerId: data.ownerId ?? null,
     clientUserId: data.clientUserId ?? null,
@@ -263,12 +265,67 @@ export async function getQualification(leadId: string) {
   return getDoc(`qualifications/${leadId}`);
 }
 
+function sameChannel(row: Row, channel: string) {
+  const value = String(row.channel ?? "inbox");
+  if (channel === "whatsapp") return value === "whatsapp" || value === "cloud_api";
+  return value === channel;
+}
+
+export async function findConversationByLeadChannel(leadId: string, channel: string) {
+  const rows = await childList("conversations", leadId);
+  return rows.find((row) => sameChannel(row, channel)) ?? null;
+}
+
+export async function findConversationByExternalUser(channel: string, externalUserId: string) {
+  const rows = await col("conversations");
+  return (
+    rows.find(
+      (row) =>
+        sameChannel(row, channel) &&
+        (row.externalUserId === externalUserId || row.instagramUserId === externalUserId),
+    ) ?? null
+  );
+}
+
 export async function createConversation(leadId: string, channel = "inbox") {
-  const existing = await getConversationByLead(leadId);
+  const normalized = channel === "cloud_api" ? "whatsapp" : channel;
+  const existing = await findConversationByLeadChannel(leadId, normalized);
   if (existing) return existing;
-  const id = nanoid();
   const lead = await getLead(leadId);
-  const conversation = { leadId, clientUserId: lead?.clientUserId ?? null, channel, unread: 0, lastAt: new Date() };
+  return createChannelThread({
+    leadId,
+    channel: normalized,
+    clientUserId: lead?.clientUserId ?? null,
+    phone: lead?.phone ?? null,
+    assigneeId: lead?.ownerId ?? null,
+    externalUserId: normalized === "instagram" ? lead?.instagramUserId ?? null : null,
+    instagramUserId: lead?.instagramUserId ?? null,
+    instagramUsername: lead?.instagramUsername ?? null,
+  });
+}
+
+export async function createChannelThread(data: Row) {
+  const channel = data.channel === "cloud_api" ? "whatsapp" : String(data.channel ?? "inbox");
+  const id = nanoid();
+  const conversation = clean({
+    leadId: data.leadId ?? null,
+    clientUserId: data.clientUserId ?? null,
+    channel,
+    unread: 0,
+    lastAt: new Date(),
+    status: "new",
+    priority: "normal",
+    tags: "[]",
+    assigneeId: data.assigneeId ?? null,
+    assigneeName: data.assigneeName ?? null,
+    phone: data.phone ?? null,
+    externalUserId: data.externalUserId ?? null,
+    instagramUserId: data.instagramUserId ?? null,
+    instagramUsername: data.instagramUsername ?? null,
+    lastMessagePreview: "",
+    customerWindowExpiresAt: null,
+    routingState: null,
+  });
   await setDoc(`conversations/${id}`, conversation);
   return { id, ...conversation };
 }
@@ -283,7 +340,11 @@ export async function getConversation(id: string) {
 
 export async function getConversationByLead(leadId: string) {
   const rows = await childList("conversations", leadId);
-  return rows[0] ?? null;
+  return rows.find((row) => sameChannel(row, "whatsapp")) ?? rows[0] ?? null;
+}
+
+export async function listConversationsForLead(leadId: string) {
+  return childList("conversations", leadId);
 }
 
 export async function updateConversation(id: string, data: Row & { unread?: number | { increment: number } }) {
@@ -301,11 +362,109 @@ export async function updateConversation(id: string, data: Row & { unread?: numb
 }
 
 export async function addMessage(data: Row) {
+  if (data.externalId) {
+    const existing = await findMessageByExternalId(String(data.channel ?? ""), String(data.externalId));
+    if (existing) return existing;
+  }
+  if (data.clientRequestId) {
+    const existing = (await col("messages")).find((item) => item.clientRequestId === data.clientRequestId);
+    if (existing) return existing;
+  }
   const id = nanoid();
   const conversation = data.conversationId ? await getDoc(`conversations/${String(data.conversationId)}`) : null;
-  const message = clean({ ...data, clientUserId: conversation?.clientUserId ?? null, createdAt: new Date() });
+  const message = clean({
+    ...data,
+    status: data.status ?? (data.direction === "outbound" ? "pending" : "received"),
+    clientUserId: conversation?.clientUserId ?? data.clientUserId ?? null,
+    createdAt: data.createdAt ?? new Date(),
+  });
   await setDoc(`messages/${id}`, message);
   return { id, ...message };
+}
+
+export async function updateMessage(id: string, data: Row) {
+  const current = await getDoc(`messages/${id}`);
+  if (!current) return null;
+  const next = { ...current, ...clean(data) };
+  delete next.id;
+  await setDoc(`messages/${id}`, next);
+  return { id, ...next };
+}
+
+export async function findMessageByMediaId(mediaId: string) {
+  return (await col("messages")).find((item) => item.mediaId === mediaId) ?? null;
+}
+
+export async function findMessageByExternalId(channel: string, externalId: string) {
+  const rows = await col("messages");
+  return (
+    rows.find((item) => {
+      if (item.externalId !== externalId) return false;
+      if (!channel) return true;
+      return sameChannel(item, channel) || item.channel === channel;
+    }) ?? null
+  );
+}
+
+export async function claimWebhookEvent(eventId: string, data: Row = {}) {
+  const id = eventId.replace(/[^\w:.-]/g, "_").slice(0, 700);
+  try {
+    await requireStore().doc(`webhookEvents/${id}`).create({
+      ...clean(data),
+      eventId,
+      receivedAt: new Date(),
+    });
+    return true;
+  } catch (error) {
+    const code = typeof error === "object" && error && "code" in error ? String(error.code) : "";
+    if (code === "6" || code === "already-exists" || code.includes("ALREADY_EXISTS")) return false;
+    throw error;
+  }
+}
+
+export async function findLeadByInstagram(instagramUserId: string) {
+  const leads = await col("leads");
+  return leads.find((lead) => lead.instagramUserId === instagramUserId) ?? null;
+}
+
+export async function listStaffUsers() {
+  return (await col("users")).filter((user) => user.role === "STAFF");
+}
+
+export async function addInternalNote(data: Row) {
+  const id = nanoid();
+  const conversation = data.conversationId ? await getDoc(`conversations/${String(data.conversationId)}`) : null;
+  const note = clean({
+    ...data,
+    clientUserId: conversation?.clientUserId ?? null,
+    createdAt: new Date(),
+  });
+  await setDoc(`internalNotes/${id}`, note);
+  return { id, ...note };
+}
+
+export async function listInternalNotes() {
+  return (await col("internalNotes")).sort(byDate("createdAt"));
+}
+
+export async function addConversationAssignment(data: Row) {
+  const id = nanoid();
+  const row = clean({ ...data, createdAt: new Date() });
+  await setDoc(`conversationAssignments/${id}`, row);
+  return { id, ...row };
+}
+
+export async function listConversationAssignments() {
+  return (await col("conversationAssignments")).sort(byDate("createdAt"));
+}
+
+export async function saveChannelConnection(channel: string, data: Row) {
+  const row = clean({ ...data, channel, updatedAt: new Date() });
+  delete row.token;
+  delete row.accessToken;
+  delete row.appSecret;
+  await setDoc(`channelConnections/${channel}`, row, true);
+  return { id: channel, ...row };
 }
 
 export async function listConversations() {
@@ -313,7 +472,7 @@ export async function listConversations() {
   const messages = await col("messages");
   return Promise.all(conversations.map(async (conversation) => ({
     ...conversation,
-    lead: await getLead(String(conversation.leadId)),
+    lead: conversation.leadId ? await getLead(String(conversation.leadId)) : null,
     messages: messages
       .filter((item) => item.conversationId === conversation.id)
       .sort((a, b) => new Date(String(a.createdAt ?? 0)).getTime() - new Date(String(b.createdAt ?? 0)).getTime()),

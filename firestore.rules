@@ -109,6 +109,24 @@ service cloud.firestore {
       allow read, write: if isStaff();
     }
 
+    match /internalNotes/{noteId} {
+      allow read, write: if isStaff();
+    }
+
+    match /conversationAssignments/{assignmentId} {
+      allow read, write: if isStaff();
+    }
+
+    match /channelConnections/{channelId} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+
+    match /webhookEvents/{eventId} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
