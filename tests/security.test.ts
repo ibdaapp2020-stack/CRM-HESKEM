@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { verifyPaymentWebhook } from "../lib/payments/verify-webhook";
-import { verifyMetaSignature } from "../lib/whatsapp/verify-signature";
+import { verifyPaymentWebhook } from "../src/features/payments/verify-webhook";
+import { verifyMetaSignature } from "../src/features/inbox/whatsapp/verify-signature";
 
 function sign(body: string, secret: string) {
   return createHmac("sha256", secret).update(body).digest("hex");
@@ -38,7 +38,7 @@ test("payment webhook accepts only a matching signature", () => {
 });
 
 test("the default JWT secret is not present in the middleware", () => {
-  const source = readFileSync(new URL("../middleware.ts", import.meta.url), "utf8");
+  const source = readFileSync(new URL("../src/middleware.ts", import.meta.url), "utf8");
   assert.equal(source.includes("ibda-crm-dev-secret"), false);
   assert.equal(source.includes("AUTH_SECRET"), true);
 });

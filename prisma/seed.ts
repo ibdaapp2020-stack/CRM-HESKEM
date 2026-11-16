@@ -1,8 +1,8 @@
-import { PrismaClient } from "../lib/generated/prisma";
+import { PrismaClient } from "../src/lib/generated/prisma";
 import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
-import { INDUSTRY_TEMPLATES } from "../lib/industries";
-import { DEFAULT_MESSAGE_TEMPLATES } from "../lib/whatsapp/templates";
+import { INDUSTRY_TEMPLATES } from "../src/lib/industries";
+import { DEFAULT_MESSAGE_TEMPLATES } from "../src/features/inbox/whatsapp/templates";
 
 const prisma = new PrismaClient();
 

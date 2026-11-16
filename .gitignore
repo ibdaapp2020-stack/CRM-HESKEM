@@ -53,4 +53,5 @@ next-env.d.ts
 
 # prisma query engines (generated locally)
 /lib/generated/prisma/*.node
+/src/lib/generated/prisma/*.node
 .neon

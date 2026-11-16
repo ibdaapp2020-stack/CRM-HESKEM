@@ -1,6 +1,6 @@
 // Creates (or updates) a STAFF user WITHOUT touching any other data.
 // Usage: npx tsx prisma/create-admin.ts <email> <password> [name]
-import { PrismaClient } from "../lib/generated/prisma";
+import { PrismaClient } from "../src/lib/generated/prisma";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();

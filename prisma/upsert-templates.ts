@@ -1,5 +1,5 @@
-import { PrismaClient } from "../lib/generated/prisma";
-import { INDUSTRY_TEMPLATES } from "../lib/industries";
+import { PrismaClient } from "../src/lib/generated/prisma";
+import { INDUSTRY_TEMPLATES } from "../src/lib/industries";
 
 const prisma = new PrismaClient();
 
