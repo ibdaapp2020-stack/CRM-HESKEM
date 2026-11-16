@@ -84,7 +84,7 @@ export default async function LeadDetailPage({
           <Card className="p-4">
             <h2 className="mb-3 font-medium">יומן</h2>
             <ul className="space-y-2 text-sm">
-              {lead.activities.map((a) => (
+              {lead.activities.map((a: { id: string; message: string; createdAt: string | Date }) => (
                 <li key={a.id} className="border-b border-line/40 pb-2">
                   {a.message}
                   <span className="ms-2 text-xs text-muted">{formatDateTime(a.createdAt)}</span>
@@ -99,8 +99,8 @@ export default async function LeadDetailPage({
         leadId={lead.id}
         locale={locale}
         quotedTotal={
-          lead.documents.find((d) => d.type === "QUOTE" && d.status === "SIGNED")?.total ??
-          lead.documents.find((d) => d.type === "QUOTE")?.total ??
+          lead.documents.find((d: { type: string; status: string; total: number }) => d.type === "QUOTE" && d.status === "SIGNED")?.total ??
+          lead.documents.find((d: { type: string; total: number }) => d.type === "QUOTE")?.total ??
           0
         }
         receipts={lead.receipts}

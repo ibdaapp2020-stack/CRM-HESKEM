@@ -32,10 +32,10 @@ export default async function LoginPage({
           <div className="mb-4 rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-100">
             {params.error === "server"
               ? locale === "en"
-                ? "Server error: database or AUTH_SECRET is not configured. Check the environment variables."
+                ? "Server error: Firebase Auth or the session secret is not available."
                 : locale === "ar"
-                  ? "خطأ في الخادم: قاعدة البيانات أو AUTH_SECRET غير مضبوطة."
-                  : "שגיאת שרת: מסד הנתונים או AUTH_SECRET לא מוגדרים. בדוק את משתני הסביבה."
+                  ? "خطأ في الخادم: Firebase Auth أو سر الجلسة غير متاح."
+                  : "שגיאת שרת: Firebase Auth או סוד ההתחברות לא זמינים."
               : locale === "en"
                 ? "Wrong email or password"
                 : locale === "ar"

@@ -26,7 +26,7 @@ export default async function ProjectDetailPage({
         <p className="mt-2 text-sm text-muted">{project.summary}</p>
       </div>
       <div className="space-y-2">
-        {project.milestones.map((m) => (
+        {project.milestones.map((m: { id: string; title: string; description?: string | null; status: string }) => (
           <Card key={m.id} className="flex items-center justify-between p-4">
             <div>
               <div className="font-medium">{m.title}</div>

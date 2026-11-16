@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/services/database";
+import { updatePayments } from "@/services/firestore/crm";
 import { getPaymentProvider } from "@/features/payments";
 import {
   PAYMENT_SIGNATURE_HEADER,
@@ -29,13 +29,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  await prisma.payment.updateMany({
-    where: { providerRef: parsed.providerRef },
-    data: {
+  await updatePayments(
+    { providerRef: parsed.providerRef },
+    {
       status: parsed.status,
       paidAt: parsed.status === "COMPLETED" ? new Date() : null,
     },
-  });
+  );
 
   return NextResponse.json({ ok: true });
 }

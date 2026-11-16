@@ -14,7 +14,7 @@ export default async function PortalQuestionsPage() {
       {lead.questions.length === 0 && (
         <p className="text-sm text-muted">אין שאלות כרגע.</p>
       )}
-      {lead.questions.map((q) => (
+      {lead.questions.map((q: { id: string; question: string; required: boolean; answer?: string | null }) => (
         <Card key={q.id} className="p-5">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="font-medium">{q.question}</h2>

@@ -1,6 +1,13 @@
 import { nanoid } from "nanoid";
-import bcrypt from "bcryptjs";
-import { prisma } from "@/services/database";
+import {
+  addMessage,
+  createConversation,
+  createLead,
+  findLeadByPhone,
+  getConversationByLead,
+  updateConversation,
+  upsertAuthUser,
+} from "@/services/firestore/crm";
 import { getWhatsAppProvider } from "./whatsapp";
 
 export async function findOrCreateLeadByPhone(input: {
@@ -11,48 +18,32 @@ export async function findOrCreateLeadByPhone(input: {
   locale?: string;
 }) {
   const phone = input.phone.trim();
-  const existing = await prisma.lead.findFirst({
-    where: { phone },
-    include: { conversation: true },
-  });
+  const existing = await findLeadByPhone(phone);
   if (existing) {
-    if (!existing.conversation) {
-      await prisma.conversation.create({ data: { leadId: existing.id } });
+    if (!(await getConversationByLead(String(existing.id)))) {
+      await createConversation(String(existing.id));
     }
-    return prisma.lead.findUniqueOrThrow({
-      where: { id: existing.id },
-      include: { conversation: true },
-    });
+    return { ...existing, conversation: await getConversationByLead(String(existing.id)) };
   }
 
-  const email =
-    input.email?.trim() ||
-    `${phone.replace(/\D/g, "")}@client.ibda.local`;
-  const passwordHash = await bcrypt.hash(`Client${nanoid(6)}`, 10);
-  const clientUser = await prisma.user.upsert({
-    where: { email },
-    update: { name: input.fullName, phone },
-    create: {
-      email,
-      name: input.fullName,
-      phone,
-      role: "CLIENT",
-      passwordHash,
-    },
+  const email = input.email?.trim() || `${phone.replace(/\D/g, "")}@client.ibda.local`;
+  const clientUser = await upsertAuthUser({
+    email,
+    name: input.fullName,
+    phone,
+    password: `Client${nanoid(8)}`,
+    role: "CLIENT",
   });
-
-  return prisma.lead.create({
-    data: {
-      fullName: input.fullName,
-      phone,
-      email: input.email?.trim() || null,
-      locale: input.locale || "he",
-      ownerId: input.staffId,
-      clientUserId: clientUser.id,
-      conversation: { create: {} },
-    },
-    include: { conversation: true },
+  const lead = await createLead({
+    fullName: input.fullName,
+    phone,
+    email: input.email?.trim() || null,
+    locale: input.locale || "he",
+    ownerId: input.staffId,
+    clientUserId: clientUser.id,
   });
+  const conversation = await createConversation(String(lead.id));
+  return { ...lead, conversation };
 }
 
 export async function sendSignLinkMessage(input: {
@@ -74,27 +65,18 @@ export async function sendSignLinkMessage(input: {
 
   let conversationId = input.conversationId;
   if (!conversationId) {
-    const conv = await prisma.conversation.upsert({
-      where: { leadId: input.leadId },
-      update: {},
-      create: { leadId: input.leadId },
-    });
-    conversationId = conv.id;
+    const conv = (await getConversationByLead(input.leadId)) ?? (await createConversation(input.leadId));
+    conversationId = String(conv.id);
   }
 
-  await prisma.message.create({
-    data: {
-      conversationId,
-      direction: "outbound",
-      channel,
-      body,
-      authorId: input.staffId,
-    },
+  await addMessage({
+    conversationId,
+    direction: "outbound",
+    channel,
+    body,
+    authorId: input.staffId,
   });
-  await prisma.conversation.update({
-    where: { id: conversationId },
-    data: { lastAt: new Date(), channel },
-  });
+  await updateConversation(conversationId, { lastAt: new Date(), channel });
   return channel;
 }
 

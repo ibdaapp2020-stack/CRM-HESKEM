@@ -8,14 +8,14 @@ export default async function ProjectsPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">הקמת מערכות</h1>
-      {projects.map((p) => {
-        const done = p.milestones.filter((m) => m.status === "DONE").length;
+      {projects.map((p: { id: string; name: string; status: string; lead?: { fullName?: string } | null; milestones: { status: string }[] }) => {
+        const done = p.milestones.filter((m: { status: string }) => m.status === "DONE").length;
         return (
           <Link key={p.id} href={`/office/projects/${p.id}`}>
             <Card className="mb-2 flex items-center justify-between p-4 hover:border-cyan/40">
               <div>
                 <div className="font-medium">{p.name}</div>
-                <div className="text-sm text-muted">{p.lead.fullName}</div>
+                <div className="text-sm text-muted">{p.lead?.fullName}</div>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-muted">

@@ -24,7 +24,7 @@ export default async function PortalProjectPage() {
         <h1 className="text-2xl font-bold">{project.name}</h1>
         <p className="text-sm text-muted">{project.summary}</p>
       </div>
-      {project.milestones.map((m) => (
+      {project.milestones.map((m: { id: string; title: string; description?: string | null; status: string }) => (
         <Card key={m.id} className="flex items-center justify-between p-4">
           <div>
             <div className="font-medium">{m.title}</div>

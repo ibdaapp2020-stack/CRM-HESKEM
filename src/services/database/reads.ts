@@ -1,165 +1,73 @@
-import { prisma } from "./client";
+import {
+  countLeadsByStage,
+  getDocument,
+  getDocumentBySignToken,
+  getDocumentTemplate,
+  getLead,
+  getLeadByClient,
+  getLeadDetail,
+  getOfficeDashboard,
+  getProject,
+  getSetting,
+  listConversations,
+  listDocumentTemplates,
+  listDocuments,
+  listDocumentsForLead,
+  listLeads,
+  listMessageTemplates,
+  listProjects,
+  searchLeads,
+} from "@/services/firestore/crm";
 
-export function searchLeads(stage?: string, q?: string) {
-  return prisma.lead.findMany({
-    orderBy: { updatedAt: "desc" },
-    where: {
-      AND: [
-        stage && stage !== "ALL" ? { stage } : {},
-        q
-          ? {
-              OR: [
-                { fullName: { contains: q } },
-                { phone: { contains: q } },
-                { company: { contains: q } },
-                { campaignHeadline: { contains: q } },
-              ],
-            }
-          : {},
-      ],
-    },
-  });
-}
-
-export function countLeadsByStage() {
-  return prisma.lead.groupBy({
-    by: ["stage"],
-    _count: { _all: true },
-  });
-}
-
-export function getLeadDetail(id: string) {
-  return prisma.lead.findUnique({
-    where: { id },
-    include: {
-      qualification: true,
-      conversation: true,
-      documents: { orderBy: { createdAt: "desc" } },
-      questions: { orderBy: { createdAt: "desc" } },
-      appointments: { orderBy: { scheduledAt: "desc" } },
-      activities: { orderBy: { createdAt: "desc" }, take: 12 },
-      project: true,
-      payments: true,
-      receipts: { orderBy: { receivedAt: "desc" } },
-      systemAccesses: { include: { changes: { orderBy: { changedAt: "desc" } } } },
-      retainerPlans: { include: { entries: true } },
-    },
-  });
-}
+export { searchLeads, countLeadsByStage, getLeadDetail };
 
 export function getLeadById(id: string) {
-  return prisma.lead.findUnique({ where: { id } });
+  return getLead(id);
 }
 
 export function getLeadIdForClient(clientUserId: string) {
-  return prisma.lead.findUnique({ where: { clientUserId } });
+  return getLeadByClient(clientUserId);
 }
 
-export function listDocuments() {
-  return prisma.document.findMany({
-    orderBy: { updatedAt: "desc" },
-    include: { lead: true, signatures: true },
-  });
+export function listDocumentsPage() {
+  return listDocuments();
 }
+
+export { listDocuments };
 
 export function listTemplatesByType(type: string) {
-  return prisma.documentTemplate.findMany({
-    where: { type },
-    orderBy: [{ industry: "asc" }, { name: "asc" }],
-  });
+  return listDocumentTemplates().then((rows) => rows.filter((row) => row.type === type));
 }
 
 export function getOfficeDocument(id: string) {
-  return prisma.document.findUnique({
-    where: { id },
-    include: { lead: true, lineItems: { orderBy: { sortOrder: "asc" } }, signatures: true },
-  });
+  return getDocument(id, true);
 }
 
-export function getDocumentBySignToken(token: string) {
-  return prisma.document.findUnique({
-    where: { signToken: token },
-    include: { lead: true, lineItems: true, signatures: true },
-  });
-}
+export { getDocumentBySignToken };
 
 export function getPortalDocument(id: string) {
-  return prisma.document.findUnique({
-    where: { id },
-    include: { lead: true, lineItems: true, signatures: true },
-  });
+  return getDocument(id, true);
 }
 
 export function listTemplates() {
-  return prisma.documentTemplate.findMany({
-    orderBy: [{ industry: "asc" }, { type: "asc" }, { name: "asc" }],
-  });
+  return listDocumentTemplates();
 }
 
-export function listSentDocuments() {
-  return prisma.document.findMany({
-    where: { status: { in: ["SENT", "SIGNED", "VIEWED"] } },
-    orderBy: { updatedAt: "desc" },
-    take: 30,
-    include: { lead: true },
-  });
+export async function listSentDocuments() {
+  const documents = await listDocuments();
+  return documents.filter((document) => ["SENT", "SIGNED", "VIEWED"].includes(String(document.status))).slice(0, 30);
 }
 
 export function getTemplate(id: string) {
-  return prisma.documentTemplate.findUnique({ where: { id } });
+  return getDocumentTemplate(id);
 }
 
 export function listInbox() {
-  return Promise.all([
-    prisma.conversation.findMany({
-      orderBy: { lastAt: "desc" },
-      include: {
-        lead: true,
-        messages: { orderBy: { createdAt: "asc" } },
-      },
-    }),
-    prisma.messageTemplate.findMany({ orderBy: { title: "asc" } }),
-  ]);
+  return Promise.all([listConversations(), listMessageTemplates()]);
 }
 
 export function getWhatsAppLastError() {
-  return prisma.appSetting.findUnique({ where: { key: "whatsapp_last_error" } });
+  return getSetting("whatsapp_last_error");
 }
 
-export function listProjects() {
-  return prisma.project.findMany({
-    orderBy: { updatedAt: "desc" },
-    include: { lead: true, milestones: true },
-  });
-}
-
-export function getProject(id: string) {
-  return prisma.project.findUnique({
-    where: { id },
-    include: {
-      lead: true,
-      milestones: { orderBy: { sortOrder: "asc" } },
-    },
-  });
-}
-
-export function getOfficeDashboard() {
-  return Promise.all([
-    prisma.lead.findMany({ orderBy: { updatedAt: "desc" } }),
-    prisma.document.findMany({
-      where: { status: { in: ["SENT", "VIEWED"] } },
-      include: { lead: true },
-    }),
-    prisma.lead.findMany({ where: { stage: "PAYMENT" } }),
-    prisma.project.findMany({
-      where: { status: { not: "LIVE" } },
-      include: { lead: true, milestones: true },
-    }),
-    prisma.activity.findMany({
-      take: 12,
-      orderBy: { createdAt: "desc" },
-      include: { lead: true },
-    }),
-    getWhatsAppLastError(),
-  ]);
-}
+export { listProjects, getProject, getOfficeDashboard, listLeads, listDocumentsForLead };

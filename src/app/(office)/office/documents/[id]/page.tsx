@@ -62,7 +62,7 @@ export default async function OfficeDocumentPage({
               footer: doc.footer,
               customNotes: doc.customNotes,
               vatRate: doc.vatRate,
-              lineItems: doc.lineItems.map((l) => ({
+              lineItems: doc.lineItems.map((l: { title: string; description?: string | null; quantity: number; unitPrice: number; discount: number }) => ({
                 title: l.title,
                 description: l.description ?? "",
                 quantity: l.quantity,

@@ -1,7 +1,5 @@
 /**
- * The live database gateway for pages, actions, and webhooks.
- * Firestore repositories are prepared, but they are not used here until the data move is approved.
- * Do not import the generated client from features or pages.
+ * Application data goes through Firestore.
+ * PostgreSQL is not a runtime source.
  */
-export { prisma } from "./client";
 export * from "./reads";

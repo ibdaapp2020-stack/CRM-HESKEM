@@ -33,8 +33,9 @@ export function getAdminApp() {
   if (!projectId) {
     throw new Error("FIREBASE_PROJECT_ID is missing.");
   }
+  const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
   if (process.env.FIRESTORE_EMULATOR_HOST) {
-    return initializeApp({ projectId });
+    return initializeApp({ projectId, storageBucket });
   }
   if (!serviceAccountReady()) {
     throw new Error(
@@ -47,7 +48,7 @@ export function getAdminApp() {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
       privateKey: privateKey()!,
     }),
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    storageBucket,
   });
 }
 

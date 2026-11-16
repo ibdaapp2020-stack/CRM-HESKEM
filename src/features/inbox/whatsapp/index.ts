@@ -1,22 +1,16 @@
-import { prisma } from "@/services/database";
+import { listSettings } from "@/services/firestore/crm";
 import { cloudProvider } from "./cloud-provider";
 import { inboxProvider } from "./inbox-provider";
 import type { WhatsAppConfig, WhatsAppProvider } from "./types";
 
 export async function getWhatsAppConfig(): Promise<WhatsAppConfig> {
-  const rows = await prisma.appSetting.findMany({
-    where: {
-      key: {
-        in: [
-          "whatsapp_provider",
-          "whatsapp_token",
-          "whatsapp_phone_id",
-          "whatsapp_verify_token",
-          "whatsapp_app_secret",
-        ],
-      },
-    },
-  });
+  const rows = await listSettings([
+    "whatsapp_provider",
+    "whatsapp_token",
+    "whatsapp_phone_id",
+    "whatsapp_verify_token",
+    "whatsapp_app_secret",
+  ]);
   const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
   return {
     provider: map.whatsapp_provider || process.env.WHATSAPP_PROVIDER || "inbox",

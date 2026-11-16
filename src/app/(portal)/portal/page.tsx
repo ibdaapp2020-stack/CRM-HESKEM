@@ -13,9 +13,10 @@ export default async function PortalHomePage() {
     return <p className="text-muted">לא נמצא תיק לקוח משויך למשתמש זה.</p>;
   }
 
-  const openQuestions = lead.questions.filter((q) => !q.answer);
-  const pendingDocs = lead.documents.filter((d) => d.status !== "SIGNED");
-  const stageMeta = isStage(lead.stage) ? STAGE_META[lead.stage] : null;
+  const openQuestions = lead.questions.filter((q: { answer?: string | null }) => !q.answer);
+  const pendingDocs = lead.documents.filter((d: { status: string }) => d.status !== "SIGNED");
+  const stage = String(lead.stage ?? "");
+  const stageMeta = isStage(stage) ? STAGE_META[stage] : null;
 
   return (
     <div className="space-y-6">
@@ -39,7 +40,7 @@ export default async function PortalHomePage() {
             <p className="text-sm text-muted">אין מסמכים ממתינים.</p>
           ) : (
             <ul className="space-y-2">
-              {pendingDocs.map((d) => (
+              {pendingDocs.map((d: { id: string; title: string }) => (
                 <li key={d.id}>
                   <Link href={`/portal/documents/${d.id}`} className="text-cyan-2">
                     {d.title}

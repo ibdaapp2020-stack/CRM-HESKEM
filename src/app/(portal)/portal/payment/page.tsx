@@ -9,8 +9,8 @@ export default async function PortalPaymentPage() {
   const lead = await getClientLead(user);
   if (!lead) return null;
 
-  const quote = lead.documents.find((d) => d.type === "QUOTE" && d.status === "SIGNED");
-  const amount = quote?.total || lead.documents.find((d) => d.type === "QUOTE")?.total || 0;
+  const quote = lead.documents.find((d: { type: string; status: string; total: number }) => d.type === "QUOTE" && d.status === "SIGNED");
+  const amount = quote?.total || lead.documents.find((d: { type: string; total: number }) => d.type === "QUOTE")?.total || 0;
   const method = lead.paymentMethods[0];
   const lastPayment = lead.payments[0];
 

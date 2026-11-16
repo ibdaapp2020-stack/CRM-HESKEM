@@ -24,11 +24,6 @@ env:
     availability:
       - BUILD
       - RUNTIME
-  - variable: DATABASE_URL
-    secret: DATABASE_URL
-    availability:
-      - BUILD
-      - RUNTIME
   - variable: AUTH_SECRET
     secret: AUTH_SECRET
     availability:

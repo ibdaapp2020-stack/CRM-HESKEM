@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireClient, requireStaff } from "@/lib/auth";
-import { prisma } from "@/services/database";
+import { addActivity, createQuestion, getLeadByClient, getQuestion, updateQuestion } from "@/services/firestore/crm";
 
 export async function askClientQuestionAction(formData: FormData) {
   const staff = await requireStaff();
@@ -11,16 +11,12 @@ export async function askClientQuestionAction(formData: FormData) {
   const required = String(formData.get("required") || "on") === "on";
   if (!question) throw new Error("יש לכתוב שאלה");
 
-  await prisma.clientQuestion.create({
-    data: { leadId, question, required, authorId: staff.id },
-  });
-  await prisma.activity.create({
-    data: {
-      leadId,
-      actorId: staff.id,
-      type: "question",
-      message: `נשלחה שאלת חובה ללקוח`,
-    },
+  await createQuestion({ leadId, question, required, authorId: staff.id });
+  await addActivity({
+    leadId,
+    actorId: staff.id,
+    type: "question",
+    message: "נשלחה שאלת חובה ללקוח",
   });
   revalidatePath(`/office/leads/${leadId}`);
   revalidatePath("/portal");
@@ -33,25 +29,18 @@ export async function answerQuestionAction(formData: FormData) {
   const answer = String(formData.get("answer") || "").trim();
   if (!answer) throw new Error("יש להשיב");
 
-  const lead = await prisma.lead.findUnique({
-    where: { clientUserId: client.id },
-  });
-  const question = await prisma.clientQuestion.findUnique({ where: { id } });
+  const lead = await getLeadByClient(client.id);
+  const question = await getQuestion(id);
   if (!lead || !question || question.leadId !== lead.id) {
     throw new Error("אין הרשאה לשאלה זו");
   }
 
-  await prisma.clientQuestion.update({
-    where: { id },
-    data: { answer, answeredAt: new Date() },
-  });
-  await prisma.activity.create({
-    data: {
-      leadId: lead.id,
-      actorId: client.id,
-      type: "question_answered",
-      message: "הלקוח השיב על שאלה",
-    },
+  await updateQuestion(id, { answer, answeredAt: new Date() });
+  await addActivity({
+    leadId: String(lead.id),
+    actorId: client.id,
+    type: "question_answered",
+    message: "הלקוח השיב על שאלה",
   });
   revalidatePath("/portal");
   revalidatePath("/portal/questions");

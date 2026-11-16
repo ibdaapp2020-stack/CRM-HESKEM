@@ -1,4 +1,4 @@
-import { prisma } from "@/services/database";
+import { getSetting, listSettings, upsertSetting } from "@/services/firestore/crm";
 import { getWhatsAppConfig } from "./index";
 import type { WhatsAppConfig } from "./types";
 
@@ -18,20 +18,14 @@ export type WhatsAppAccount = {
 
 export async function getStoredWhatsAppAccount(): Promise<WhatsAppAccount> {
   const config = await getWhatsAppConfig();
-  const rows = await prisma.appSetting.findMany({
-    where: {
-      key: {
-        in: [
-          "whatsapp_display_phone",
-          "whatsapp_display_name",
-          "whatsapp_quality",
-          "whatsapp_waba_id",
-          "whatsapp_phone_status",
-          "whatsapp_webhook_status",
-        ],
-      },
-    },
-  });
+  const rows = await listSettings([
+    "whatsapp_display_phone",
+    "whatsapp_display_name",
+    "whatsapp_quality",
+    "whatsapp_waba_id",
+    "whatsapp_phone_status",
+    "whatsapp_webhook_status",
+  ]);
   const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
   const connected = config.provider === "cloud" && Boolean(config.token && config.phoneNumberId);
   return {
@@ -45,14 +39,6 @@ export async function getStoredWhatsAppAccount(): Promise<WhatsAppAccount> {
     phoneStatus: map.whatsapp_phone_status || "",
     webhookStatus: map.whatsapp_webhook_status || "",
   };
-}
-
-async function upsertSetting(key: string, value: string) {
-  await prisma.appSetting.upsert({
-    where: { key },
-    update: { value },
-    create: { key, value },
-  });
 }
 
 type GraphError = { error?: { message?: string } };
@@ -160,7 +146,7 @@ export async function refreshWhatsAppAccountFromMeta() {
   // רישום Webhook אוטומטי — גם כאן כשל לא מפיל את החיבור, אלא מוצג בכרטיס.
   let webhookStatus: string;
   try {
-    const stored = await prisma.appSetting.findUnique({ where: { key: "whatsapp_waba_id" } });
+    const stored = await getSetting("whatsapp_waba_id");
     const wabaId = await findWabaId(config, stored?.value || "");
     if (!wabaId) {
       webhookStatus = "לא נמצא מזהה חשבון עסק (WABA) — הזינו אותו בהגדרות";

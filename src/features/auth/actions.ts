@@ -1,14 +1,18 @@
 "use server";
 
-import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import { prisma } from "@/services/database";
+import { getUser } from "@/services/firestore/crm";
+import { signInWithFirebase, verifyFirebaseIdToken } from "./firebase-token";
 import {
   clearSessionCookie,
   setSessionCookie,
   signSession,
   type SessionUser,
 } from "@/lib/session";
+
+function roleOf(value: unknown): SessionUser["role"] | null {
+  return value === "STAFF" || value === "CLIENT" ? value : null;
+}
 
 export async function loginAction(formData: FormData) {
   const email = String(formData.get("email") || "")
@@ -21,33 +25,41 @@ export async function loginAction(formData: FormData) {
   let failure: "1" | "server" | null = null;
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+    const idToken = await signInWithFirebase(email, password);
+    if (!idToken) {
       failure = "1";
     } else {
-      session = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role === "STAFF" ? "STAFF" : "CLIENT",
-      };
-      const token = await signSession(session);
-      await setSessionCookie(token);
+      const payload = await verifyFirebaseIdToken(idToken);
+      const uid = typeof payload.sub === "string" ? payload.sub : "";
+      let profile: Record<string, unknown> | null = null;
+      try {
+        profile = uid ? await getUser(uid) : null;
+      } catch {
+        profile = null;
+      }
+      const role = roleOf(payload.role) ?? roleOf(profile?.role);
+      if (!uid || !role) {
+        failure = "1";
+      } else {
+        session = {
+          id: uid,
+          email: typeof payload.email === "string" ? payload.email : email,
+          name: String(profile?.name ?? payload.name ?? email),
+          role,
+        };
+        await setSessionCookie(await signSession(session));
+      }
     }
   } catch (error) {
-    // Typically: DATABASE_URL missing/unreachable, tables not created, or AUTH_SECRET missing.
-    console.error("[login] server error:", error);
+    console.error("[login] server error:", error instanceof Error ? error.message : "login failed");
     failure = "server";
   }
 
-  // redirect() throws internally, so it must stay outside the try/catch.
   if (failure || !session) {
     redirect(`/login?error=${failure ?? "1"}`);
   }
 
-  if (next.startsWith("/")) {
-    redirect(next);
-  }
+  if (next.startsWith("/")) redirect(next);
   redirect(session.role === "STAFF" ? "/office" : "/portal");
 }
 
