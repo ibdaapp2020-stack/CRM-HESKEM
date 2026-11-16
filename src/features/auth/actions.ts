@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getUser } from "@/services/firestore/crm";
 import { signInWithFirebase, verifyFirebaseIdToken } from "./firebase-token";
 import {
   clearSessionCookie,
@@ -33,7 +32,10 @@ export async function loginAction(formData: FormData) {
       const uid = typeof payload.sub === "string" ? payload.sub : "";
       let profile: Record<string, unknown> | null = null;
       try {
-        profile = uid ? await getUser(uid) : null;
+        if (uid) {
+          const { getUser } = await import("@/services/firestore/crm");
+          profile = await getUser(uid);
+        }
       } catch {
         profile = null;
       }

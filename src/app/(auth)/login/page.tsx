@@ -1,4 +1,3 @@
-import { loginAction } from "@/features/auth/actions";
 import { BrandMark, BrandTitle } from "@/components/shared/brand";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { Button, Card, Field, Input } from "@/components/ui";
@@ -43,7 +42,7 @@ export default async function LoginPage({
                   : "אימייל או סיסמה שגויים"}
           </div>
         )}
-        <form action={loginAction} className="space-y-4">
+        <form action="/api/login" method="post" className="space-y-4">
           <input type="hidden" name="next" value={params.next ?? ""} />
           <Field label={locale === "en" ? "Email" : locale === "ar" ? "البريد" : "אימייל"}>
             <Input name="email" type="email" required />

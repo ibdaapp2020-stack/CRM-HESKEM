@@ -1,9 +1,10 @@
-import Image from "next/image";
 import { COMPANY } from "@/lib/company";
 
 export function BrandMark({ size = 40 }: { size?: number }) {
   return (
-    <Image
+    // The public logo is served directly so the login page does not depend on the image optimizer.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src="/logo.jpg"
       alt={COMPANY.name}
       width={size}
