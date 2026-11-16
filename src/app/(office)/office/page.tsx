@@ -8,11 +8,49 @@ import { getStoredWhatsAppAccount } from "@/features/inbox/whatsapp/account";
 import { STAGE_META, type Stage } from "@/features/leads/pipeline";
 import { formatDateTime } from "@/lib/utils";
 
+const emptyAccount = {
+  connected: false,
+  connectionState: "disconnected" as const,
+  credentialsSaved: false,
+  provider: "inbox",
+  phoneNumberId: "",
+  displayPhone: "",
+  displayName: "",
+  quality: "",
+  wabaId: "",
+  phoneStatus: "",
+  webhookStatus: "",
+};
+
+function shownDate(value: unknown) {
+  if (value instanceof Date || typeof value === "string") {
+    try {
+      return formatDateTime(value);
+    } catch {
+      return "—";
+    }
+  }
+  return "—";
+}
+
+function safeLoadError(error: unknown) {
+  const message = error instanceof Error ? error.message : "קריאת הנתונים נכשלה";
+  if (/private key|begin |secret|token|password/i.test(message)) return "קריאת הנתונים נכשלה";
+  return message.slice(0, 180);
+}
+
 export default async function OfficeDashboardPage() {
-  const [dashboard, whatsapp] = await Promise.all([
-    getOfficeDashboard(),
-    getStoredWhatsAppAccount(),
-  ]);
+  let dashboard: Awaited<ReturnType<typeof getOfficeDashboard>> = [[], [], [], [], [], null];
+  let whatsapp: Awaited<ReturnType<typeof getStoredWhatsAppAccount>> = emptyAccount;
+  let loadError: string | null = null;
+  try {
+    const loaded = await Promise.all([getOfficeDashboard(), getStoredWhatsAppAccount()]);
+    dashboard = loaded[0];
+    whatsapp = loaded[1];
+  } catch (error) {
+    console.error("[office] dashboard read failed:", safeLoadError(error));
+    loadError = safeLoadError(error);
+  }
   const [leads, waitingSign, waitingPay, projects, activities, errorRow] = dashboard;
 
   const counts = leads.reduce<Record<string, number>>((acc, lead) => {
@@ -28,10 +66,12 @@ export default async function OfficeDashboardPage() {
           סינון לידים, חתימות, תשלומים והקמות — במבט אחד.
         </p>
       </div>
-      {!isAdminConfigured() && (
+      {(!isAdminConfigured() || loadError) && (
         <Card className="border border-amber-400/40 p-4 text-sm">
-          החשבון נכנס. מסד הנתונים עדיין לא מחובר לשרת, ולכן הרשימות ריקות. ב-Vercel חסר
-          האימייל האמיתי של חשבון השירות: FIREBASE_CLIENT_EMAIL.
+          החשבון נכנס.{" "}
+          {loadError
+            ? `הנתונים לא נטענו: ${loadError}`
+            : "מסד הנתונים עדיין לא מחובר לשרת, ולכן הרשימות ריקות. ב-Vercel חסר האימייל האמיתי של חשבון השירות: FIREBASE_CLIENT_EMAIL."}
         </Card>
       )}
       <WhatsAppAccountCard account={whatsapp} error={errorRow?.value} />
@@ -65,9 +105,9 @@ export default async function OfficeDashboardPage() {
                 className="flex items-center justify-between rounded-xl bg-navy px-3 py-2 text-sm hover:bg-navy-3"
               >
                 <span>
-                  {doc.title} · {doc.lead.fullName}
+                  {doc.title} · {doc.lead?.fullName ?? ""}
                 </span>
-                <StageBadge stage={doc.lead.stage} />
+                <StageBadge stage={doc.lead?.stage ?? "NEW_LEAD"} />
               </Link>
             ))}
           </div>
@@ -79,7 +119,7 @@ export default async function OfficeDashboardPage() {
               <li key={a.id} className="border-b border-line/50 pb-2">
                 <div>{a.message}</div>
                 <div className="text-xs text-muted">
-                  {a.lead?.fullName} · {formatDateTime(a.createdAt)}
+                  {a.lead?.fullName} · {shownDate(a.createdAt)}
                 </div>
               </li>
             ))}
