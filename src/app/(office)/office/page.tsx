@@ -3,6 +3,7 @@ import { Card } from "@/components/ui";
 import { StageBadge } from "@/components/shared/stage-badge";
 import { WhatsAppAccountCard } from "@/features/inbox/components/whatsapp-account-card";
 import { getOfficeDashboard } from "@/services/database";
+import { isAdminConfigured } from "@/lib/firebase/admin";
 import { getStoredWhatsAppAccount } from "@/features/inbox/whatsapp/account";
 import { STAGE_META, type Stage } from "@/features/leads/pipeline";
 import { formatDateTime } from "@/lib/utils";
@@ -27,6 +28,12 @@ export default async function OfficeDashboardPage() {
           סינון לידים, חתימות, תשלומים והקמות — במבט אחד.
         </p>
       </div>
+      {!isAdminConfigured() && (
+        <Card className="border border-amber-400/40 p-4 text-sm">
+          החשבון נכנס. מסד הנתונים עדיין לא מחובר לשרת, ולכן הרשימות ריקות. ב-Vercel חסר
+          האימייל האמיתי של חשבון השירות: FIREBASE_CLIENT_EMAIL.
+        </Card>
+      )}
       <WhatsAppAccountCard account={whatsapp} error={errorRow?.value} />
       <div className="grid gap-3 md:grid-cols-4">
         <Stat title="לידים פתוחים" value={leads.filter((l) => l.stage !== "LOST").length} />

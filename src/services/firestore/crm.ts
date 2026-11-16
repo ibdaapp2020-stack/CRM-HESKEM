@@ -1,14 +1,21 @@
 import { nanoid } from "nanoid";
 import { getAuth } from "firebase-admin/auth";
 import { FieldValue, type DocumentData } from "firebase-admin/firestore";
-import { getAdminApp, getAdminFirestore, getAdminStorage } from "@/lib/firebase/admin";
+import { getAdminApp, getAdminFirestore, getAdminStorage, isAdminConfigured } from "@/lib/firebase/admin";
 
 // Firestore documents are open records; callers narrow the fields they use.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
 
 function store() {
+  if (!isAdminConfigured()) return null;
   return getAdminFirestore();
+}
+
+function requireStore() {
+  const db = store();
+  if (!db) throw new Error("Firebase Admin is not configured.");
+  return db;
 }
 
 function clean<T>(value: T): T {
@@ -44,16 +51,20 @@ function docData(id: string, data: DocumentData | undefined): Row | null {
 }
 
 async function getDoc(path: string) {
-  const snap = await store().doc(path).get();
+  const db = store();
+  if (!db) return null;
+  const snap = await db.doc(path).get();
   return snap.exists ? docData(snap.id, snap.data()) : null;
 }
 
 async function setDoc(path: string, data: Row, merge = false) {
-  await store().doc(path).set(clean(data), { merge });
+  await requireStore().doc(path).set(clean(data), { merge });
 }
 
 async function col(name: string): Promise<Row[]> {
-  const snap = await store().collection(name).get();
+  const db = store();
+  if (!db) return [];
+  const snap = await db.collection(name).get();
   return snap.docs.flatMap((item) => {
     const row = docData(item.id, item.data());
     return row ? [row] : [];
