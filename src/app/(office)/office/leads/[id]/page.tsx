@@ -37,9 +37,16 @@ export default async function LeadDetailPage({
             <span>{lead.phone}</span>
           </div>
         </div>
-        <Link href="/office/leads">
-          <Button variant="ghost">{t("backToLeads")}</Button>
-        </Link>
+        <div className="flex gap-2">
+          {lead.conversation && (
+            <Link href={`/office/inbox?c=${lead.conversation.id}`}>
+              <Button variant="outline">מענה במרכז ההודעות</Button>
+            </Link>
+          )}
+          <Link href="/office/leads">
+            <Button variant="ghost">{t("backToLeads")}</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)]">

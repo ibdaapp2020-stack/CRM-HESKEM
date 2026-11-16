@@ -72,6 +72,33 @@ export function cloudProvider(config: WhatsAppConfig): WhatsAppProvider {
       if (!token || !phoneNumberId) {
         throw new Error("WhatsApp Cloud API is not configured");
       }
+      const to = message.toPhone.replace(/\D/g, "");
+      const payload = message.templateName
+        ? {
+            messaging_product: "whatsapp",
+            to,
+            type: "template",
+            template: {
+              name: message.templateName,
+              language: { code: message.templateLanguage || "he" },
+            },
+          }
+        : message.mediaId
+          ? {
+              messaging_product: "whatsapp",
+              to,
+              type: message.mediaType || "image",
+              [message.mediaType || "image"]: {
+                id: message.mediaId,
+                caption: message.body || undefined,
+              },
+            }
+          : {
+              messaging_product: "whatsapp",
+              to,
+              type: "text",
+              text: { body: message.body },
+            };
       const res = await fetch(
         `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
         {
@@ -80,12 +107,7 @@ export function cloudProvider(config: WhatsAppConfig): WhatsAppProvider {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to: message.toPhone.replace(/\D/g, ""),
-            type: "text",
-            text: { body: message.body },
-          }),
+          body: JSON.stringify(payload),
         },
       );
       if (!res.ok) {

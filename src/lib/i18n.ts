@@ -16,7 +16,7 @@ type Dict = Record<string, string>;
 const he: Dict = {
   dashboard: "דשבורד",
   leads: "לידים",
-  inbox: "וואטסאפ",
+  inbox: "מרכז הודעות",
   documents: "מסמכים",
   templates: "תבניות",
   projects: "הקמות",
@@ -88,7 +88,7 @@ const he: Dict = {
 const ar: Dict = {
   dashboard: "لوحة التحكم",
   leads: "العملاء المحتملون",
-  inbox: "واتساب",
+  inbox: "مركز الرسائل",
   documents: "مستندات",
   templates: "قوالب",
   projects: "الإنشاء",
@@ -160,7 +160,7 @@ const ar: Dict = {
 const en: Dict = {
   dashboard: "Dashboard",
   leads: "Leads",
-  inbox: "WhatsApp",
+  inbox: "Inbox",
   documents: "Documents",
   templates: "Templates",
   projects: "Builds",

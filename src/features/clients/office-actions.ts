@@ -10,8 +10,12 @@ import {
   createRetainer,
   getRetainer,
   upsertRetainerEntry,
+  listSettings,
   upsertSetting,
 } from "@/services/firestore/crm";
+import { getInstagramConfig } from "@/features/inbox/instagram/config";
+import { probeInstagramConnection } from "@/features/inbox/instagram/probe";
+import { classifyGraphFailure } from "@/features/inbox/meta/parse";
 import { getWhatsAppConfig } from "@/features/inbox/whatsapp";
 import { refreshWhatsAppAccountFromMeta } from "@/features/inbox/whatsapp/account";
 
@@ -43,6 +47,10 @@ export async function saveWhatsAppSettingsAction(formData: FormData) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "שגיאה בחיבור Meta";
     await upsertSetting("whatsapp_last_error", message);
+    await upsertSetting(
+      "whatsapp_connection_state",
+      message.includes("חסר") ? "disconnected" : classifyGraphFailure(message),
+    );
     accountNote = `הגדרות נשמרו, חיבור Meta נכשל: ${message}`;
   }
 
@@ -59,6 +67,10 @@ export async function refreshWhatsAppAccountAction() {
   } catch (error) {
     const message = error instanceof Error ? error.message : "שגיאה בחיבור Meta";
     await upsertSetting("whatsapp_last_error", message);
+    await upsertSetting(
+      "whatsapp_connection_state",
+      message.includes("חסר") ? "disconnected" : classifyGraphFailure(message),
+    );
   }
   revalidatePath("/office");
   revalidatePath("/office/settings");
@@ -170,4 +182,64 @@ export async function updateRetainerEntryAction(formData: FormData) {
 
 export async function currentWhatsAppSettings() {
   return getWhatsAppConfig();
+}
+
+export async function saveInstagramSettingsAction(formData: FormData) {
+  const staff = await requireStaff();
+  const entries = [
+    ["instagram_token", String(formData.get("token") || "").trim()],
+    ["instagram_account_id", String(formData.get("accountId") || "").trim()],
+    ["instagram_login_mode", String(formData.get("loginMode") || "instagram")],
+    ["instagram_app_secret", String(formData.get("appSecret") || "").trim()],
+    ["instagram_verify_token", String(formData.get("verifyToken") || "").trim()],
+    ["inbox_auto_create_lead", formData.get("autoLead") === "no" ? "no" : "yes"],
+  ] as const;
+  for (const [key, value] of entries) {
+    if ((key === "instagram_token" || key === "instagram_app_secret" || key === "instagram_verify_token") && !value) {
+      continue;
+    }
+    await upsertSetting(key, value);
+  }
+  const probe = await probeInstagramConnection();
+  await addActivity({
+    actorId: staff.id,
+    type: "settings",
+    message:
+      probe.state === "connected"
+        ? `Instagram מחובר${probe.username ? `: @${probe.username}` : ""}`
+        : `בדיקת Instagram: ${probe.state}`,
+  });
+  revalidatePath("/office/settings");
+  revalidatePath("/office/inbox");
+}
+
+export async function probeInstagramAction() {
+  await requireStaff();
+  await probeInstagramConnection();
+  revalidatePath("/office/settings");
+  revalidatePath("/office/inbox");
+}
+
+export async function currentInstagramSettings() {
+  const config = await getInstagramConfig();
+  const rows = await listSettings([
+    "instagram_connection_state",
+    "instagram_username",
+    "instagram_last_error",
+    "inbox_auto_create_lead",
+  ]);
+  const map = Object.fromEntries(rows.map((row) => [row.key, row.value]));
+  const state = ["connected", "missing_permissions", "error"].includes(map.instagram_connection_state)
+    ? map.instagram_connection_state
+    : "disconnected";
+  return {
+    accountId: config.accountId,
+    loginMode: config.loginMode,
+    verifyToken: config.verifyToken,
+    connectionState: state,
+    username: map.instagram_username || "",
+    error: map.instagram_last_error || "",
+    autoLead: map.inbox_auto_create_lead === "no" ? "no" : "yes",
+    credentialsSaved: Boolean(config.token && config.accountId),
+  };
 }

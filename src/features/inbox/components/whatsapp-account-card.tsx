@@ -19,11 +19,25 @@ export function WhatsAppAccountCard({
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <h2 className="font-medium">חשבון וואטסאפ</h2>
-            {account.connected ? (
-              <Badge tone="green">מחובר</Badge>
-            ) : (
-              <Badge tone="rose">לא מחובר</Badge>
-            )}
+            <Badge
+              tone={
+                account.connectionState === "connected"
+                  ? "green"
+                  : account.connectionState === "missing_permissions"
+                    ? "amber"
+                    : account.connectionState === "error"
+                      ? "rose"
+                      : "slate"
+              }
+            >
+              {account.connectionState === "connected"
+                ? "מחובר"
+                : account.connectionState === "missing_permissions"
+                  ? "חסרות הרשאות"
+                  : account.connectionState === "error"
+                    ? "שגיאת חיבור"
+                    : "מנותק"}
+            </Badge>
           </div>
           {account.connected ? (
             <div className="space-y-1 text-sm">
@@ -44,13 +58,15 @@ export function WhatsAppAccountCard({
             </div>
           ) : (
             <p className="text-sm text-muted">
-              שמרו Access Token ו-Phone Number ID בהגדרות כדי לראות כאן את המספר העסקי.
+              {account.credentialsSaved
+                ? "הפרטים שמורים בשרת, אבל Meta עדיין לא אישרה את החיבור."
+                : "שמרו Access Token ו-Phone Number ID, ואז הריצו בדיקת חיבור."}
             </p>
           )}
           {error ? <p className="mt-2 text-xs text-rose-300">{error}</p> : null}
         </div>
         <div className="flex gap-2">
-          {account.connected && (
+          {account.credentialsSaved && (
             <form action={refreshWhatsAppAccountAction}>
               <Button type="submit" variant="outline">
                 רענן

@@ -4,8 +4,12 @@ import type { WhatsAppConfig } from "./types";
 
 const GRAPH = "https://graph.facebook.com/v21.0";
 
+export type ConnectionState = "connected" | "missing_permissions" | "error" | "disconnected";
+
 export type WhatsAppAccount = {
   connected: boolean;
+  connectionState: ConnectionState;
+  credentialsSaved: boolean;
   provider: string;
   phoneNumberId: string;
   displayPhone: string;
@@ -25,11 +29,16 @@ export async function getStoredWhatsAppAccount(): Promise<WhatsAppAccount> {
     "whatsapp_waba_id",
     "whatsapp_phone_status",
     "whatsapp_webhook_status",
+    "whatsapp_connection_state",
   ]);
   const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
-  const connected = config.provider === "cloud" && Boolean(config.token && config.phoneNumberId);
+  const connectionState = (["connected", "missing_permissions", "error"].includes(map.whatsapp_connection_state)
+    ? map.whatsapp_connection_state
+    : "disconnected") as ConnectionState;
   return {
-    connected,
+    connected: connectionState === "connected",
+    connectionState,
+    credentialsSaved: Boolean(config.token && config.phoneNumberId),
     provider: config.provider,
     phoneNumberId: config.phoneNumberId,
     displayPhone: map.whatsapp_display_phone || "",
@@ -127,6 +136,7 @@ export async function refreshWhatsAppAccountFromMeta() {
   await upsertSetting("whatsapp_display_phone", data.display_phone_number || "");
   await upsertSetting("whatsapp_display_name", data.verified_name || "");
   await upsertSetting("whatsapp_quality", data.quality_rating || "");
+  await upsertSetting("whatsapp_connection_state", "connected");
   await upsertSetting("whatsapp_last_error", "");
 
   // פרטים נוספים על המספר — לא קריטי, לכן כשל כאן לא עוצר את החיבור.
