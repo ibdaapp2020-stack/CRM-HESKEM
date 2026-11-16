@@ -13,6 +13,13 @@ function roleOf(value: unknown): SessionUser["role"] | null {
   return value === "STAFF" || value === "CLIENT" ? value : null;
 }
 
+function staffEmails() {
+  return (process.env.STAFF_EMAILS || "office@ibda.co.il,admin@ibda.co.il")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 export async function loginAction(formData: FormData) {
   const email = String(formData.get("email") || "")
     .trim()
@@ -39,13 +46,17 @@ export async function loginAction(formData: FormData) {
       } catch {
         profile = null;
       }
-      const role = roleOf(payload.role) ?? roleOf(profile?.role);
+      const tokenEmail = (typeof payload.email === "string" ? payload.email : email).toLowerCase();
+      const role =
+        roleOf(payload.role) ??
+        roleOf(profile?.role) ??
+        (staffEmails().includes(tokenEmail) ? "STAFF" : null);
       if (!uid || !role) {
         failure = "1";
       } else {
         session = {
           id: uid,
-          email: typeof payload.email === "string" ? payload.email : email,
+          email: tokenEmail,
           name: String(profile?.name ?? payload.name ?? email),
           role,
         };
