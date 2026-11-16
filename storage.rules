@@ -1,0 +1,23 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isStaff() {
+      return request.auth != null && request.auth.token.role == 'STAFF';
+    }
+
+    function ownsLead(leadId) {
+      return request.auth != null
+        && request.auth.token.role == 'CLIENT'
+        && firestore.get(/databases/(default)/documents/leads/$(leadId)).data.authUid == request.auth.uid;
+    }
+
+    match /leads/{leadId}/{path=**} {
+      allow read: if isStaff() || ownsLead(leadId);
+      allow write: if isStaff();
+    }
+
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

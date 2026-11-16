@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isStaff() {
+      return signedIn() && request.auth.token.role == 'STAFF';
+    }
+
+    function isClientOwner(leadId) {
+      return signedIn()
+        && request.auth.token.role == 'CLIENT'
+        && get(/databases/$(database)/documents/leads/$(leadId)).data.authUid == request.auth.uid;
+    }
+
+    match /users/{userId} {
+      allow read: if isStaff() || (signedIn() && request.auth.uid == userId);
+      allow write: if false;
+    }
+
+    match /stats/{docId} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+
+    match /settings/{key} {
+      allow read, write: if isStaff();
+    }
+
+    match /messageTemplates/{key} {
+      allow read, write: if isStaff();
+    }
+
+    match /documentTemplates/{templateId} {
+      allow read, write: if isStaff();
+    }
+
+    match /activities/{activityId} {
+      allow read, write: if isStaff();
+    }
+
+    match /leads/{leadId} {
+      allow read: if isStaff() || isClientOwner(leadId);
+      allow create, update, delete: if isStaff();
+
+      match /qualification/{docId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+      }
+
+      match /conversation/{docId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+
+        match /messages/{messageId} {
+          allow read: if isStaff() || isClientOwner(leadId);
+          allow write: if isStaff();
+        }
+      }
+
+      match /documents/{documentId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+
+        match /lines/{lineId} {
+          allow read: if isStaff() || isClientOwner(leadId);
+          allow write: if isStaff();
+        }
+
+        match /signatures/{signatureId} {
+          allow read: if isStaff() || isClientOwner(leadId);
+          allow write: if isStaff();
+        }
+      }
+
+      match /questions/{questionId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow create, delete: if isStaff();
+        allow update: if isStaff() || (
+          isClientOwner(leadId)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['answer', 'answeredAt'])
+        );
+      }
+
+      match /project/{docId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+
+        match /milestones/{milestoneId} {
+          allow read: if isStaff() || isClientOwner(leadId);
+          allow write: if isStaff();
+        }
+      }
+
+      match /payments/{paymentId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if false;
+      }
+
+      match /paymentMethods/{methodId} {
+        allow read, write: if isStaff();
+      }
+
+      match /receipts/{receiptId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+      }
+
+      match /appointments/{appointmentId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+      }
+
+      match /accesses/{accessId} {
+        allow read, write: if isStaff();
+
+        match /changes/{changeId} {
+          allow read, write: if isStaff();
+        }
+      }
+
+      match /retainers/{planId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+
+        match /entries/{entryId} {
+          allow read: if isStaff() || isClientOwner(leadId);
+          allow write: if isStaff();
+        }
+      }
+
+      match /activities/{activityId} {
+        allow read: if isStaff() || isClientOwner(leadId);
+        allow write: if isStaff();
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
